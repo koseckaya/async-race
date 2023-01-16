@@ -27,6 +27,12 @@
     &:disabled {
         background: rgb(131, 129, 129);
     }
+    &-car {
+        min-width: 75px;  
+        height: 25px;
+        padding: 0 5px;
+        margin-right: 0;
+    }
  } 
  
 ul {

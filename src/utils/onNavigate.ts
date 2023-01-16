@@ -1,9 +1,9 @@
 //@ts-nocheck
-import { routes } from '../index.ts';
+import { routes } from '../index';
 
 
 
-export const onNavigate = (path) => {
+export const onNavigate: onNavigateType = (path) => {
     const root = document.querySelector('#root')
     window.history.pushState(
         {},
@@ -11,11 +11,10 @@ export const onNavigate = (path) => {
         window.location.origin + path
     )
     const module = routes[path]
-    if (module) {
-
-        root?.innerHTML = module.render()
+    if (module && root) {
+        root.innerHTML = module.render()
         module.init();
-        module?.bind();
-        module?.afterRender();
-    } 
+        module.bind();
+        module.afterRender();
+    }
 }

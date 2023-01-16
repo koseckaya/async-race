@@ -34,6 +34,8 @@ class ListServices {
     
     addEntity = (entity) => this.items.push(entity)
 
+    addEntities = (entities) => this.items.push(...entities)
+
     updateEntity = (id, entity) => {
         const newItems = this.items.map((item) => {
             if (item.id === id) {

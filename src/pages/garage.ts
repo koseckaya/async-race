@@ -3,15 +3,15 @@ import { createCar, deleteCar } from "../services/APIService";
 import { getCarsList } from "../services/APIService.ts";
 import { onNavigate } from "../utils/onNavigate.ts"
 import ListServices from './../services/ListServices.ts';
+import { getRandomCarsList, renderCar } from './../helpers/car';
 
 const GARAGE_PER_PAGE = 7
 
 class Garage {
     listServices: ListServices | null = null
 
-
-    constructor() {
-        this.listServices = new ListServices([], GARAGE_PER_PAGE)
+    constructor(listService) {
+        this.listServices = listService;
     }
 
     render = () => {
@@ -90,10 +90,8 @@ class Garage {
                 <span>page: ${this.listServices.getPage()}</span>
                 <ul class="garage__items">
                     ${this.listServices.getDataByCurrentPage().map((i) => {
-                        return `<li class="garage__item" data-id="${ i.id }">${i.id}: <span style="color:${i.color}">${i.name}</span>
-                            <button class="btn btn-remove" >Remove</button>
-                        </li>`
-        }).join('')}
+                    return renderCar(i);
+                }).join('')}
                 </ul>
                 <button class="btn btn-prev" ${isPrevDisabled ? 'disabled' : ''}>Prev</button>
                 <button class="btn btn-next" ${isNextDisabled ? 'disabled' : ''}>Next</button>
@@ -138,6 +136,9 @@ class Garage {
 
         const updateCar = document.querySelector('.btn-updateCar')
         updateCar?.addEventListener('click', this.handleUpdateCar)
+
+        const generateCars = document.querySelector('.btn-generate')
+        generateCars?.addEventListener('click', this.handleGenerateCars)
     }
 
     renderFormCar = () => {
@@ -157,12 +158,14 @@ class Garage {
                         <input type="color" name="colorUpdate" value="#FF0000">
                         <button class="btn btn-updateCar">Update</button>
                     </form>
+                     <button class="btn btn-generate">Generate</button>
                 </div>
             </div>
         `
     }
 
     handleCreateCar = (e) => {
+        e.preventDefault()
         const formEl = document.querySelector('.create-car-form');
         const formData = new FormData(formEl);
         const params = {};
@@ -174,11 +177,24 @@ class Garage {
         createCar(params).then((data) => {
             console.log('car is created', data);
         })
+
     }
 
     handleUpdateCar = (e) => {
-
+        e.preventDefault()
         console.log('update car')
+    }
+
+    handleGenerateCars = () => {
+        const newCars = getRandomCarsList()
+        const carsPromises = []
+        newCars.forEach((item) => carsPromises.push(createCar(item)))
+        Promise.all(carsPromises).then((data) => {
+            console.log('', data);
+            //data.forEach(i => )
+            this.listServices.addEntities(data)
+            this.initGarageList()
+        })
     }
 }
 export default Garage

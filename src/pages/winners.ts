@@ -1,14 +1,18 @@
 //@ts-nocheck
+import { renderWinner } from "../helpers/car";
 import { getWinnersList } from "../services/APIService";
 import ListServices from "../services/ListServices";
 import { onNavigate } from "../utils/onNavigate.ts"
+import { garageListService } from './../index';
 
-const WINNERS_PER_PAGE = 10;
 
 class Winners {
     listServices: ListServices | null = null
-    constructor() {
-        this.listServices = new ListServices([], WINNERS_PER_PAGE)
+    garageListService: ListServices | null = null
+
+    constructor(listService, garageListService) {
+        this.listServices = listService;
+        this.garageListService = garageListService;
     }
 
     render = () => `
@@ -20,7 +24,7 @@ class Winners {
     init = () => {
         this.getWinners()
     }
-    
+
     bind = () => {
         console.log('win');
     }
@@ -49,7 +53,21 @@ class Winners {
         prevBtn?.addEventListener('click', this.handlePrev)
     }
 
+    getWinnersData = () => {
+        const winners = this.listServices?.getDataByCurrentPage();
+
+
+        return winners?.reduce((acc, winner) => {
+            acc.push({
+                ...winner,
+                ...this.garageListService?.getEntity(winner.id)
+            });
+            return acc;
+        }, []);
+    }
+
     renderWinners = () => {
+        const winnersData = this.getWinnersData();
         const isPrevDisabled = this.listServices.isFirstPage()
         const isNextDisabled = this.listServices.isLastPage()
 
@@ -58,13 +76,9 @@ class Winners {
             <div class="winners">
                 <span>page: ${this.listServices.getPage()}</span>
                 <ul>
-                    ${this.listServices.getDataByCurrentPage().map((i) => {
-                        return `<li data-id="${i.id}">${i.id}: <span >name</span>
-                            <span>${i.wins}</span>
-                            <span>Best time ${i.time}</span>
-                            
-                        </li>`
-                    }).join('')}
+                    ${winnersData.map((i) => {
+            return renderWinner(i);
+        }).join('')}
                 </ul>
                 <button class="btn btn-prev-win" ${isPrevDisabled ? 'disabled' : ''}>Prev</button>
                 <button class="btn btn-next-win" ${isNextDisabled ? 'disabled' : ''}>Next</button>
