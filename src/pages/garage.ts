@@ -1,9 +1,10 @@
 //@ts-nocheck
-import { createCar, deleteCar } from "../services/APIService";
+import { createCar, deleteCar, updateCar } from "../services/APIService";
 import { getCarsList } from "../services/APIService.ts";
 import { onNavigate } from "../utils/onNavigate.ts"
 import ListServices from './../services/ListServices.ts';
 import { getRandomCarsList, renderCar } from './../helpers/car';
+import { DEFAULT_COLOR } from "../constanse";
 
 const GARAGE_PER_PAGE = 7
 
@@ -72,6 +73,9 @@ class Garage {
 
         const removeCars = document.querySelectorAll('.btn-remove')
         removeCars.forEach((i) => i.addEventListener('click', this.handleRemoveCar))
+
+        const updateCarsBtn = document.querySelectorAll('.btn-update');
+        updateCarsBtn.forEach(i => i.addEventListener(('click'), this.handleSelectCar))
     }
 
     renderGarage = () => {
@@ -120,6 +124,18 @@ class Garage {
         })
     }
 
+    handleSelectCar = (e) => {
+
+        const targetId = e.target.closest('li').dataset.id;
+        const color = document.getElementById('colorUpdate')
+        const name = document.getElementById('nameUpdate')
+        const id = document.getElementById('idUpdate')
+        const selectedCar = this.listServices.getEntity(targetId)
+        color?.value = selectedCar.color
+        name?.value = selectedCar.name
+        id?.value = selectedCar.id
+    }
+
     // Garage Form
     initFormCar = () => {
         this.unbindFormCar()
@@ -139,6 +155,8 @@ class Garage {
 
         const generateCars = document.querySelector('.btn-generate')
         generateCars?.addEventListener('click', this.handleGenerateCars)
+
+        
     }
 
     renderFormCar = () => {
@@ -154,8 +172,9 @@ class Garage {
                 </div>
                 <div class="wrapper-update">
                     <form class="update-car-form">
-                        <input type="text" name="nameUpdate">
-                        <input type="color" name="colorUpdate" value="#FF0000">
+                        <input type="text" name="name" id="nameUpdate">
+                        <input type="color" name="color" id="colorUpdate" value="#FF0000">
+                        <input type="hidden" name="id" id ="idUpdate">
                         <button class="btn btn-updateCar">Update</button>
                     </form>
                      <button class="btn btn-generate">Generate</button>
@@ -182,7 +201,21 @@ class Garage {
 
     handleUpdateCar = (e) => {
         e.preventDefault()
-        console.log('update car')
+        
+        const formEl = document.querySelector('.update-car-form');
+        const formData = new FormData(formEl);
+        const params = {};
+
+        for (const [key, value] of formData) {
+            params[key] = value;
+        }
+        const { id, ...otherParams } = params
+        if (!id) return;
+        updateCar(id, otherParams).then((entity) => {
+            this.listServices.updateEntity(entity.id, entity)
+            this.initGarageList()
+            this.clearUpdateForm()
+        })
     }
 
     handleGenerateCars = () => {
@@ -190,11 +223,20 @@ class Garage {
         const carsPromises = []
         newCars.forEach((item) => carsPromises.push(createCar(item)))
         Promise.all(carsPromises).then((data) => {
-            console.log('', data);
-            //data.forEach(i => )
             this.listServices.addEntities(data)
             this.initGarageList()
         })
     }
+
+    clearUpdateForm = () => {
+        const color = document.getElementById('colorUpdate')
+        const name = document.getElementById('nameUpdate')
+        const id = document.getElementById('idUpdate')
+        color?.value = DEFAULT_COLOR
+        name?.value = ''
+        id?.value = ''
+    }
+
+
 }
 export default Garage

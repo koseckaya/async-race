@@ -52,7 +52,7 @@ class ListServices {
         } )
     }
     
-    getEntity = (id) => this.items.find((item) => item.id === id);
+    getEntity = (id) => this.items.find((item) => +item.id === +id);
   
     isFirstPage = () => {
         return this.getPage() === 1 ? true : false;

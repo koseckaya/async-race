@@ -29,6 +29,16 @@ export const deleteCar = (id) => {
     })
 }
 
+export const updateCar = (id, params) => {
+    return fetch(ENDPOINTS.GARAGE + '/' + id, {
+        method: 'PUT',
+        body: JSON.stringify(params),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then((data) => data.json())
+}
+
 
 
 export const getWinnersList = () => {
