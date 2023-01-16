@@ -60,7 +60,9 @@ class ListServices {
     isLastPage = () => {
         return this.getPage() === this.getTotalPages() ? true : false;
     }
-
+    getFirstEntity = () => {
+       return this.items[0]
+    }
 
 }
 export default ListServices

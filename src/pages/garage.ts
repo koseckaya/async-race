@@ -5,6 +5,7 @@ import { onNavigate } from "../utils/onNavigate.ts"
 import ListServices from './../services/ListServices.ts';
 import { getRandomCarsList, renderCar } from './../helpers/car';
 import { DEFAULT_COLOR } from "../constanse";
+import CarService from "../services/CarServise";
 
 const GARAGE_PER_PAGE = 7
 
@@ -92,15 +93,24 @@ class Garage {
             <div class="garage">
                 <span>total: ${this.listServices.getTotal()}</span>
                 <span>page: ${this.listServices.getPage()}</span>
-                <ul class="garage__items">
+                <ul class="garage__items ">
                     ${this.listServices.getDataByCurrentPage().map((i) => {
                     return renderCar(i);
                 }).join('')}
                 </ul>
                 <button class="btn btn-prev" ${isPrevDisabled ? 'disabled' : ''}>Prev</button>
                 <button class="btn btn-next" ${isNextDisabled ? 'disabled' : ''}>Next</button>
+
+                <div class="car-container"></div>
             </div>
         `;
+
+        const entity = this.listServices.getFirstEntity()
+        const newCar = new CarService(entity, '.car-container', this.listServices)
+        
+            newCar.init()
+     
+    
         return;
     }
 
@@ -125,7 +135,6 @@ class Garage {
     }
 
     handleSelectCar = (e) => {
-
         const targetId = e.target.closest('li').dataset.id;
         const color = document.getElementById('colorUpdate')
         const name = document.getElementById('nameUpdate')
@@ -156,7 +165,6 @@ class Garage {
         const generateCars = document.querySelector('.btn-generate')
         generateCars?.addEventListener('click', this.handleGenerateCars)
 
-        
     }
 
     renderFormCar = () => {
@@ -196,7 +204,6 @@ class Garage {
         createCar(params).then((data) => {
             console.log('car is created', data);
         })
-
     }
 
     handleUpdateCar = (e) => {
@@ -232,9 +239,9 @@ class Garage {
         const color = document.getElementById('colorUpdate')
         const name = document.getElementById('nameUpdate')
         const id = document.getElementById('idUpdate')
-        color?.value = DEFAULT_COLOR
-        name?.value = ''
-        id?.value = ''
+        color?.value = DEFAULT_COLOR;
+        name?.value = '';
+        id?.value = '';
     }
 
 

@@ -5,3 +5,17 @@ body {
    padding: 10px 30px;
 }
 
+
+.ride{
+  animation: ease-in ride;
+  animation-fill-mode: forwards;
+}
+
+@keyframes ride {
+  0% {
+     margin-left: 0%;
+  }
+  100% {
+    margin-left: calc(100% - 60px);
+  }
+}
