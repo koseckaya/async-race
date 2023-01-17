@@ -20,9 +20,7 @@ class Garage {
     render = () => {
         return ` 
         <div class="container-garage">
-            GARAGE
             <div class="createCar">
-
             </div>
             <div class="garage-list">
             </div>
@@ -100,7 +98,7 @@ class Garage {
             <div class="garage">
                 <span>total: ${this.listServices.getTotal()}</span>
                 <span>page: ${this.listServices.getPage()}</span>
-                <div class="garage__items ">
+                <div class="garage__items track">
                     ${this.renderCarsContainers()}
                 </div>
                 <button class="btn btn-prev" ${isPrevDisabled ? 'disabled' : ''}>Prev</button>
@@ -189,6 +187,12 @@ class Garage {
         const generateCars = document.querySelector('.btn-generate')
         generateCars?.addEventListener('click', this.handleGenerateCars)
 
+        const raceCars = document.querySelector('.btn-race')
+        raceCars?.addEventListener('click', this.handleRaceCars)
+
+        const resetCars = document.querySelector('.btn-reset')
+        resetCars?.addEventListener('click', this.handleResetCars)
+
     }
 
     renderFormCar = () => {
@@ -209,7 +213,11 @@ class Garage {
                         <input type="hidden" name="id" id ="idUpdate">
                         <button class="btn btn-updateCar">Update</button>
                     </form>
-                     <button class="btn btn-generate">Generate</button>
+                    <div class="race-control">
+                        <button class="btn btn-race">Race</button>
+                        <button class="btn btn-reset">Reset</button>
+                        <button class="btn btn-generate">Generate</button>
+                     </div>
                 </div>
             </div>
         `
@@ -266,6 +274,14 @@ class Garage {
         color?.value = DEFAULT_COLOR;
         name?.value = '';
         id?.value = '';
+    }
+
+    handleRaceCars = () => {
+        
+    }
+
+    handleResetCars = () => {
+        
     }
 
 

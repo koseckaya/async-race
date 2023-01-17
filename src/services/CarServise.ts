@@ -31,7 +31,6 @@ class CarService {
     }
 
     init = () => {
-        console.log(document.querySelector(this.containerSelector));
         this.unbind()
         this.render()
         this.bind()
@@ -50,8 +49,8 @@ class CarService {
         const carStop = this.getContainerEl().querySelector('.btn-stop')
         carStop.addEventListener('click', this.handleStop)
 
-        const carReset = this.getContainerEl().querySelector('.btn-reset')
-        carReset.addEventListener('click', this.handleReset)
+        // const carReset = this.getContainerEl().querySelector('.btn-reset')
+        // carReset.addEventListener('click', this.handleReset)
     }
     render = () => {
         this.getContainerEl().innerHTML = this.renderCar(this.car)
@@ -62,15 +61,15 @@ class CarService {
         return `
         <div class="garage__item" data-id="${car.id}"> 
             <div class="car__btns">
-                <button class="btn btn-car btn-remove" >Remove</button>
-                <button class="btn btn-car btn-update" >Update</button>
-                <span class="car__name">${car.id}: ${car.name}</span>
+                <div class="car__name">${car.id} ${car.name}</div>
+                <button class="btn btn-car btn-remove"></button>
+                <button class="btn btn-car btn-update" ></button>
             </div>
             <div class="car__control">
                 <div class="btns-control">
                     <button class="btn btn-control btn-start">Start</button>
-                    <button class="btn btn-control btn-reset">Reset</button>
-                    <button class="btn btn-control btn-stop">Stop</button>
+                    
+                    <button class="btn btn-control btn-stop" disabled>Stop</button>
                 </div>
                 
                 <div class="car-wrap">
@@ -84,7 +83,6 @@ class CarService {
     `;
     }
     handleSelectCar = (e) => {
-        console.log('e', e.target);
         const targetId = e.target.closest('.garage__item').dataset.id;
         const color = document.getElementById('colorUpdate')
         const name = document.getElementById('nameUpdate')
@@ -103,22 +101,22 @@ class CarService {
         })
     }
     handleStart = (e) => {
-        console.log('start');
 
         const targetId = this.car.id;
         this.engineStatus = 'started'
         startEngine(targetId).then((data) => {
-            console.log('data', data);
+            e.target.disabled = true;
+            this.getContainerEl().querySelector('.btn-stop').disabled = false
+
             this.raceParams = data;
             this.engineStatus = 'drive'
-
             driveEngine(targetId)
                 .then(data => {
-                    console.log('Я доехал!')
+                    console.log(`${targetId} доехал!`)
                 })
                 .catch((err) => {
-                    console.log('Я сломался!')
-                    this.handleStop();
+                    console.log(`${targetId} сломался!`)
+                    this.carPause();
                 })
 
             this.carStart();
@@ -126,12 +124,15 @@ class CarService {
     }
 
 
-    handleReset = () => {
-        this.carReset();
-    }
-    handleStop = () => {
+    // handleReset = () => {
+    //     this.carReset();
+    // }
+    handleStop = (e) => {
+        this.getContainerEl().querySelector('.btn-start').disabled = false
         stopEngine(this.car.id);
-        this.carPause()
+        //this.carPause()
+        this.carReset();
+        this.getContainerEl().querySelector('.btn-stop').disabled = true;
     }
 
     carStart = () => {
@@ -148,7 +149,6 @@ class CarService {
     }
 
     carReset = () => {
-        console.log('reset');
         const car = this.getContainerEl().querySelector('.car__wrapper')
         car.classList.remove('ride')
     }

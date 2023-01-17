@@ -25,13 +25,14 @@
         cursor: pointer; 
     } 
     &:disabled {
-        background: rgb(131, 129, 129);
+        background: rgb(90 90 90);
+        cursor: inherit;
     }
     &-car {
-        min-width: 75px;  
+        min-width: 27px;
         height: 25px;
-        padding: 0 5px;
-        margin-right: 0;
+        padding: 10px 5px;
+        margin-right: 4px;
         margin-left: 0;
     }
     &-control{
@@ -41,6 +42,16 @@
         padding: 0 5px;
         margin-right: 0;
     }
+    &-remove{
+        background-image: url('./img/remove-.png');
+        background-repeat: no-repeat;
+        background-size: contain;
+    }  
+    &-update {
+         background-image: url('./img/update.png');
+        background-repeat: no-repeat;
+        background-size: contain;
+    } 
  } 
  
 ul {
@@ -54,12 +65,13 @@ ul {
         margin: 20px;
     }
     &-create{
-        margin-bottom: 20px;
+        margin-bottom: 10px;
     }
 
 }
 input {
     outline: none;
+    border-radius: 5px;
 }
 input[type='color'] {
      appearance: none;
@@ -76,22 +88,27 @@ input[type='color'] {
     &__item {
         margin: 15px 0;
     }
+    span {
+        text-transform: uppercase;
+        font-size: 25px;
+        margin-right: 20px;
+    }
 }
 
 .car {
     &__btns{
-        margin-bottom: 10px;
      
     }
     &__name {
-        font-size: 20px;
+       font-size: 17px;
+        margin-top: 2px;
     }
     &__control{
-        margin-bottom: 10px;
-         display: flex;
+        margin-top: 5px;
+        display: flex;
         flex-direction: row;
         gap: 4px;
-        align-items: center;
+        align-items: flex-start;
         .btns-control{
             display: flex;
             flex-direction: column;
@@ -101,19 +118,26 @@ input[type='color'] {
     }
     &-wrap {
         width: 100%;
+        margin-left: 30px;
     }
     &__wrapper {
         
         svg {
-            width: 47px;
-            height: 46px;
+            width: 71px;
+            height: 73px;
             transform: rotate(90deg);
         }
     }
 }
 .track {
-    background: url(./img/track.webp);
-    height: 250px;
-    background-size: 100% 100%;
+    background: url(./img/track2.png);
+    height: 1025px;
+    background-size: 100% 97%;
     background-repeat: no-repeat;
+    background-position-x: 93px;
+    padding-top: 4px;
+
+}
+.race-control{
+    margin-top: 20px;
 }
