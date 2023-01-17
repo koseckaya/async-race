@@ -11,6 +11,7 @@ const GARAGE_PER_PAGE = 7
 
 class Garage {
     listServices: ListServices | null = null
+    raceList = []
 
     constructor(listService) {
         this.listServices = listService;
@@ -80,7 +81,13 @@ class Garage {
     }
 
     renderGarage = () => {
+        this.resetRaceList();
+
         const garageListContainer = document.querySelector('.garage-list')
+        const pageCars = this.listServices.getDataByCurrentPage()
+        pageCars.forEach(car => {
+
+        });
 
         if (this.listServices.getTotal() === 0) {
             garageListContainer?.innerHTML = `<div class="garage">Garage is empty</div>`;
@@ -93,11 +100,9 @@ class Garage {
             <div class="garage">
                 <span>total: ${this.listServices.getTotal()}</span>
                 <span>page: ${this.listServices.getPage()}</span>
-                <ul class="garage__items ">
-                    ${this.listServices.getDataByCurrentPage().map((i) => {
-                    return renderCar(i);
-                }).join('')}
-                </ul>
+                <div class="garage__items ">
+                    ${this.renderCarsContainers()}
+                </div>
                 <button class="btn btn-prev" ${isPrevDisabled ? 'disabled' : ''}>Prev</button>
                 <button class="btn btn-next" ${isNextDisabled ? 'disabled' : ''}>Next</button>
 
@@ -105,13 +110,32 @@ class Garage {
             </div>
         `;
 
-        const entity = this.listServices.getFirstEntity()
-        const newCar = new CarService(entity, '.car-container', this.listServices)
-        
-            newCar.init()
-     
-    
+        this.initRaceList();
+
         return;
+    }
+
+    renderCarsContainers = () => {
+        return this.listServices.getDataByCurrentPage().map((car) => {
+            const containerClass = `car-container-${car.id}`;
+            const newCar = new CarService(car, `.${containerClass}`, this)
+            this.raceList.push(newCar)
+
+            return `<div class="${containerClass}"></div>`
+        }).join('');
+    }
+
+    initRaceList = () => {
+        this.raceList.forEach((car: CarService) => {
+            car.init();
+        })
+    }
+
+    resetRaceList = () => {
+        this.raceList.forEach((car: CarService) => {
+            car.unbind();
+        })
+        this.raceList = [];
     }
 
     handlePrev = () => {
@@ -208,7 +232,7 @@ class Garage {
 
     handleUpdateCar = (e) => {
         e.preventDefault()
-        
+
         const formEl = document.querySelector('.update-car-form');
         const formData = new FormData(formEl);
         const params = {};
