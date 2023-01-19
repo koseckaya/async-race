@@ -159,3 +159,12 @@ input[type='color'] {
 .race-control{
     margin-top: 20px;
 }
+.car-container {
+    position: relative;
+}
+.winner {
+   position: absolute;
+    left: 50%;
+    top: 50%;
+    font-size: 30px;
+}

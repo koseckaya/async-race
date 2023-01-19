@@ -59,6 +59,7 @@ class CarService {
 
     renderCar = car => {
         return `
+        <div class="winner"></div>
         <div class="garage__item" data-id="${car.id}"> 
             <div class="car__name">${car.id} ${car.name}</div>
             <div class ="rase-btns">
@@ -123,7 +124,7 @@ class CarService {
         
         let engine = driveEngine(targetId)
             .then(data => {
-                console.log(`${targetId} доехал!`)
+                console.log(`${targetId} ljtpf!`)
                 return data
             })
             .catch((err) => {

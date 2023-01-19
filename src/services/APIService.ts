@@ -76,3 +76,9 @@ export const getWinnersList = () => {
     }).then((data) => data.json())
 }
 
+export const getWinner = (id: number) => {
+    return fetch(ENDPOINTS.WINNERS + '/' + id, {
+        method: 'GET',
+    }).then((data) => data.json())
+}
+

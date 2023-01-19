@@ -119,7 +119,7 @@ class Garage {
             const newCar = new CarService(car, `.${containerClass}`, this)
             this.raceList.push(newCar)
 
-            return `<div class="${containerClass}"></div>`
+            return `<div class="${containerClass} car-container"></div>`
         }).join('');
     }
 
@@ -287,21 +287,26 @@ class Garage {
                 car.handleDriveEngine().then((data) => {
                     if (data && data.success == true && place === 1) {
                         place++; 
-                        console.log('p', car, place);
-                        alert(car.car.name)
-                        document.querySelector(car.containerSelector).innerHtml = `winner ${car.car.name} `
+                        this.setWinner(car)
+                       
                     }
                  })
             })
         })
     }
     handleResetCars = () => {
+        document.querySelectorAll('.winner').forEach((i) => i.innerText = '');
         this.raceList.forEach((car: CarService) => {
+
             car.handleStop()
         })
     }
 
-    showWinner = () => {
+    setWinner = (car) => {
+        let time = (car.raceParams.distance / car.raceParams.velocity / 1000).toFixed(2)
+        const container = document.querySelector(`${car.containerSelector} .winner`)
+        container.innerText = `winner ${car.car.name} - ${time} s`
+
 
     }
 
