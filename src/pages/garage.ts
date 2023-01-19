@@ -1,10 +1,10 @@
 //@ts-nocheck
-import { createCar, deleteCar, updateCar } from "../services/APIService";
+import { createCar, createWinner, deleteCar, getWinner, getWinnersList, updateCar } from "../services/APIService";
 import { getCarsList } from "../services/APIService.ts";
 import { onNavigate } from "../utils/onNavigate.ts"
 import ListServices from './../services/ListServices.ts';
 import { getRandomCarsList, renderCar } from './../helpers/car';
-import { DEFAULT_COLOR } from "../constanse";
+import { DEFAULT_COLOR } from "../constants";
 import CarService from "../services/CarServise";
 
 const GARAGE_PER_PAGE = 7
@@ -83,9 +83,9 @@ class Garage {
 
         const garageListContainer = document.querySelector('.garage-list')
         const pageCars = this.listServices.getDataByCurrentPage()
-        pageCars.forEach(car => {
+        // pageCars.forEach(car => {
 
-        });
+        // });
 
         if (this.listServices.getTotal() === 0) {
             garageListContainer?.innerHTML = `<div class="garage">Garage is empty</div>`;
@@ -305,8 +305,27 @@ class Garage {
     setWinner = (car) => {
         let time = (car.raceParams.distance / car.raceParams.velocity / 1000).toFixed(2)
         const container = document.querySelector(`${car.containerSelector} .winner`)
-        container.innerText = `winner ${car.car.name} - ${time} s`
-
+        container.innerText = `WINNER ${car.car.name} - ${time} s`
+        const winnerParams = {
+            id: car.car.id,
+            'time': time,
+            'wins': 1
+        }
+        console.log('getWinner', getWinner(winnerParams.id));
+        getWinner(winnerParams.id).then((data) => {
+            console.log('data', data);
+            if (data.id) {
+                winnerParams.wins = data.wins++;
+                if (data.time < winnerParams.time) {
+                    winnerParams.time = data.time
+                }
+                updateWinner(winnerParams)
+            } else {
+                createWinner(winnerParams)
+            }
+        })
+     
+        console.log('getWinnersList', getWinnersList());
 
     }
 

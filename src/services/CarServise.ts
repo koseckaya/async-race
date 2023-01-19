@@ -103,6 +103,7 @@ class CarService {
     }
     handleStart = (e) => {
         e.target.disabled = true;
+        console.log('e.target', e.target);
         this.handleStartRace()
             .then(() => {
                 this.handleDriveEngine()
@@ -124,12 +125,13 @@ class CarService {
         
         let engine = driveEngine(targetId)
             .then(data => {
-                console.log(`${targetId} ljtpf!`)
+                console.log(`${targetId} доехал!`)
                 return data
             })
             .catch((err) => {
                 console.log(`${targetId} сломался!`)
                 this.carPause();
+               
             })
         this.carStart()
         return engine;

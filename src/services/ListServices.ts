@@ -10,7 +10,6 @@ class ListServices {
     }
 
     setPage = (num: number): void => {
-        console.log('items', this.items);
         if (num < 1 || num > this.getTotalPages()) {
             this.page = 1
         } else {

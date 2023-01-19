@@ -1,4 +1,4 @@
-import { CarItem } from "../types";
+import { CarItem, WinnerItem } from "../types";
 
 
 const BACKEND_URL = 'http://localhost:3000/';
@@ -42,6 +42,10 @@ export const updateCar = (id: number, params: CarItem) => {
 
 
 export const startEngine = (id: number) => {
+    const startBtns = Array.from(document.querySelectorAll<HTMLButtonElement>('.btn-start') )
+    startBtns.forEach(i => i.disabled = true)
+
+
     return fetch(ENDPOINTS.ENGINE + '?id=' + id + '&status=started', {
         method: 'PATCH',
         headers: {
@@ -70,15 +74,34 @@ export const stopEngine = (id: number) => {
 
 
 
-export const getWinnersList = () => {
+export const getWinnersList = (): Promise<WinnerItem[]> => {
     return fetch(ENDPOINTS.WINNERS, {
         method: 'GET',
     }).then((data) => data.json())
 }
 
-export const getWinner = (id: number) => {
+export const getWinner = (id: number): Promise<WinnerItem> => {
     return fetch(ENDPOINTS.WINNERS + '/' + id, {
         method: 'GET',
     }).then((data) => data.json())
 }
 
+export const createWinner = (params: WinnerItem) => {
+    return fetch(ENDPOINTS.WINNERS, {
+        method: 'POST',
+        body: JSON.stringify(params),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then((data) => data.json())
+}
+
+export const updateWinner = (params: WinnerItem) => {
+    return fetch(ENDPOINTS.WINNERS + '/' + params.id, {
+        method: 'PUT',
+        body: JSON.stringify(params),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then((data) => data.json())
+}

@@ -17,11 +17,11 @@ export const renderCar = car => {
 
 export const renderWinner = car => {
     return `
-        <li class="garage__item" data-id="${car.id}">
+        <div class="garage__item" data-id="${car.id}">
             ${car.id}: <span style="color:${car.color}">${car.name}</span>
-            <span>${car.wins}</span>
+            <span>Wins: ${car.wins}</span>
             <span>Best time ${car.time}</span>
-        </li>
+        </div>
         
     `;
 }

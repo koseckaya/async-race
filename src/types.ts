@@ -18,3 +18,9 @@ export interface CarItem {
    color: string;
    id: number
 }
+
+export interface WinnerItem {
+   id: number;
+   time: number;
+   wins?: number;
+}
