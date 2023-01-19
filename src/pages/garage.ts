@@ -277,13 +277,33 @@ class Garage {
     }
 
     handleRaceCars = () => {
-        
+        const startRacePromise = []
+        let place = 1;
+        this.raceList.forEach((car: CarService) => {
+            startRacePromise.push(car.handleStartRace())
+        })
+        Promise.all(startRacePromise).then(() => {
+            this.raceList.forEach((car: CarService) => { 
+                car.handleDriveEngine().then((data) => {
+                    if (data && data.success == true && place === 1) {
+                        place++; 
+                        console.log('p', car, place);
+                        alert(car.car.name)
+                        document.querySelector(car.containerSelector).innerHtml = `winner ${car.car.name} `
+                    }
+                 })
+            })
+        })
     }
-
     handleResetCars = () => {
-        
+        this.raceList.forEach((car: CarService) => {
+            car.handleStop()
+        })
     }
 
+    showWinner = () => {
+
+    }
 
 }
 export default Garage

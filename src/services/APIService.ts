@@ -1,4 +1,5 @@
-// @ts-nocheck
+import { CarItem } from "../types";
+
 
 const BACKEND_URL = 'http://localhost:3000/';
 const ENDPOINTS = {
@@ -13,7 +14,7 @@ export const getCarsList = () => {
     })
 }
 
-export const createCar = (params) => {
+export const createCar = (params: CarItem) => {
     return fetch(ENDPOINTS.GARAGE, {
         method: 'POST',
         body: JSON.stringify(params),
@@ -23,13 +24,13 @@ export const createCar = (params) => {
     }).then((data) => data.json())
 }
 
-export const deleteCar = (id) => {
+export const deleteCar = (id: number) => {
     return fetch(ENDPOINTS.GARAGE + '/' + id, {
         method: 'DELETE',
     })
 }
 
-export const updateCar = (id, params) => {
+export const updateCar = (id: number, params: CarItem) => {
     return fetch(ENDPOINTS.GARAGE + '/' + id, {
         method: 'PUT',
         body: JSON.stringify(params),
@@ -40,7 +41,7 @@ export const updateCar = (id, params) => {
 }
 
 
-export const startEngine = (id) => {
+export const startEngine = (id: number) => {
     return fetch(ENDPOINTS.ENGINE + '?id=' + id + '&status=started', {
         method: 'PATCH',
         headers: {
@@ -49,7 +50,7 @@ export const startEngine = (id) => {
     }).then((data) => data.json())
 }
 
-export const driveEngine = (id) => {
+export const driveEngine = (id: number) => {
     return fetch(ENDPOINTS.ENGINE + '?id=' + id + '&status=drive', {
         method: 'PATCH',
         headers: {
@@ -58,7 +59,7 @@ export const driveEngine = (id) => {
     }).then((data) => data.json())
 }
 
-export const stopEngine = (id) => {
+export const stopEngine = (id: number) => {
     return fetch(ENDPOINTS.ENGINE + '?id=' + id + '&status=stopped', {
         method: 'PATCH',
         headers: {

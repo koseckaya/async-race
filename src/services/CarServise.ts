@@ -60,24 +60,24 @@ class CarService {
     renderCar = car => {
         return `
         <div class="garage__item" data-id="${car.id}"> 
-            <div class="car__btns">
-                <div class="car__name">${car.id} ${car.name}</div>
-                <button class="btn btn-car btn-remove"></button>
-                <button class="btn btn-car btn-update" ></button>
-            </div>
-            <div class="car__control">
+            <div class="car__name">${car.id} ${car.name}</div>
+            <div class ="rase-btns">
+                <div class="car__btns">
+                    <button class="btn btn-car btn-remove"></button>
+                    <button class="btn btn-car btn-update"></button>
+                </div>
                 <div class="btns-control">
                     <button class="btn btn-control btn-start">Start</button>
-                    
                     <button class="btn btn-control btn-stop" disabled>Stop</button>
                 </div>
-                
+            </div>
+            <div class="car__control">
                 <div class="car-wrap">
                     <div class="car__wrapper">
                         ${renderCarSvg(car.color)}
                     </div>
                 </div>
-                
+
             </div>
         </div>
     `;
@@ -101,36 +101,42 @@ class CarService {
         })
     }
     handleStart = (e) => {
-
-        const targetId = this.car.id;
-        this.engineStatus = 'started'
-        startEngine(targetId).then((data) => {
-            e.target.disabled = true;
-            this.getContainerEl().querySelector('.btn-stop').disabled = false
-
-            this.raceParams = data;
-            this.engineStatus = 'drive'
-            driveEngine(targetId)
-                .then(data => {
-                    console.log(`${targetId} доехал!`)
-                })
-                .catch((err) => {
-                    console.log(`${targetId} сломался!`)
-                    this.carPause();
-                })
-
-            this.carStart();
+        e.target.disabled = true;
+        this.handleStartRace()
+            .then(() => {
+                this.handleDriveEngine()
         })
     }
 
+    handleStartRace = () => {
+        const targetId = this.car.id;
+        this.engineStatus = 'started'
+        return startEngine(targetId).then((data) => {
+            this.getContainerEl().querySelector('.btn-stop').disabled = false
+            this.raceParams = data;
+        })
+    }
 
-    // handleReset = () => {
-    //     this.carReset();
-    // }
+    handleDriveEngine = () => {
+        const targetId = this.car.id;
+        this.engineStatus = 'drive'
+        
+        let engine = driveEngine(targetId)
+            .then(data => {
+                console.log(`${targetId} доехал!`)
+                return data
+            })
+            .catch((err) => {
+                console.log(`${targetId} сломался!`)
+                this.carPause();
+            })
+        this.carStart()
+        return engine;
+    }
+   
     handleStop = (e) => {
         this.getContainerEl().querySelector('.btn-start').disabled = false
         stopEngine(this.car.id);
-        //this.carPause()
         this.carReset();
         this.getContainerEl().querySelector('.btn-stop').disabled = true;
     }
