@@ -42,8 +42,8 @@ export const updateCar = (id: number, params: CarItem) => {
 
 
 export const startEngine = (id: number) => {
-    const startBtns = Array.from(document.querySelectorAll<HTMLButtonElement>('.btn-start') )
-    startBtns.forEach(i => i.disabled = true)
+    //const startBtns = Array.from(document.querySelectorAll<HTMLButtonElement>('.btn-start') )
+    //startBtns.forEach(i => i.disabled = true)
 
 
     return fetch(ENDPOINTS.ENGINE + '?id=' + id + '&status=started', {
@@ -54,12 +54,13 @@ export const startEngine = (id: number) => {
     }).then((data) => data.json())
 }
 
-export const driveEngine = (id: number) => {
+export const driveEngine = (id: number, signal = null) => {
     return fetch(ENDPOINTS.ENGINE + '?id=' + id + '&status=drive', {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json'
-        }
+        },
+        signal
     }).then((data) => data.json())
 }
 

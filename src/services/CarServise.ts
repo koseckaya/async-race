@@ -15,11 +15,13 @@ class CarService {
     garage: Garage | null = null
     raceParams = null
     engineStatus = null
+    abortController = null
 
     constructor(car, containerSelector, garage) {
         this.car = car
         this.containerSelector = containerSelector
         this.garage = garage;
+    
     }
 
     getContainerEl = () => {
@@ -105,7 +107,7 @@ class CarService {
     }
     handleStart = (e) => {
         e.target.disabled = true;
-        console.log('e.target', e.target);
+      
         this.handleStartRace()
             .then(() => {
                 this.handleDriveEngine()
@@ -113,6 +115,7 @@ class CarService {
     }
 
     handleStartRace = () => {
+        this.getContainerEl().querySelector('.btn-start').disabled = true
         const targetId = this.car.id;
         this.engineStatus = 'started'
         return startEngine(targetId).then((data) => {
@@ -124,10 +127,12 @@ class CarService {
     handleDriveEngine = () => {
         const targetId = this.car.id;
         this.engineStatus = 'drive'
+        this.abortController = new AbortController();
+        let signal = this.abortController.signal;
         
-        let engine = driveEngine(targetId)
+        let engine = driveEngine(targetId, signal)
             .then(data => {
-                console.log(`${targetId} доехал!`)
+                console.log(`${targetId} доехал! `)
                 return data
             })
             .catch((err) => {
@@ -141,6 +146,7 @@ class CarService {
    
     handleStop = (e) => {
         this.getContainerEl().querySelector('.btn-start').disabled = false
+        this.abortController.abort()
         stopEngine(this.car.id);
         this.carReset();
         this.getContainerEl().querySelector('.btn-stop').disabled = true;
@@ -152,6 +158,7 @@ class CarService {
         car.style.animationPlayState = "running";
         const time = (this.raceParams.distance / this.raceParams.velocity / 1000).toFixed(2);
         car.style.animationDuration = `${time}s`;
+        console.log('time', time, this.car.id);
     }
 
     carPause = () => {

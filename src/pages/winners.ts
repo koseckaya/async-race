@@ -26,7 +26,6 @@ class Winners {
     }
 
     bind = () => {
-        console.log('win');
     }
 
     afterRender = () => {
@@ -46,7 +45,6 @@ class Winners {
         this.bindWinnersList()
     }
     bindWinnersList = () => {
-        console.log('bind winners');
         const nextBtn = document.querySelector('.btn-next-win')
         nextBtn?.addEventListener('click', this.handleNext)
         const prevBtn = document.querySelector('.btn-prev-win')
@@ -75,7 +73,7 @@ class Winners {
         container?.innerHTML = `
             <div class="winners">
                 <span class="winners__page">page: ${this.listServices.getPage()}</span>
-
+                <span class="winners__page">total: ${this.listServices.getTotal()}</span>
             <table class="table">
                 <thead>
                     <tr>

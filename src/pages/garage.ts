@@ -33,7 +33,7 @@ class Garage {
     }
 
     bind = () => {
-        console.log('garage bind');
+
     }
 
     afterRender = () => {
@@ -109,6 +109,7 @@ class Garage {
     }
 
     renderCarsContainers = () => {
+        console.log(this.listServices.getDataByCurrentPage());
         return this.listServices.getDataByCurrentPage().map((car) => {
             const containerClass = `car-container-${car.id}`;
             const newCar = new CarService(car, `.${containerClass}`, this)
@@ -144,9 +145,9 @@ class Garage {
     }
 
     handleRemoveCar = (e) => {
-        const targetId = e.target.closest('li').dataset.id;
+        const targetId = Number(e.target.closest('.garage__item').dataset.id);
         deleteCar(targetId).then(() => {
-            this.listServices.removeEntity(+targetId)
+            this.listServices.removeEntity(targetId)
             this.initGarageList()
         })
     }
@@ -210,7 +211,7 @@ class Garage {
                     </form>
                     <div class="race-control">
                         <button class="btn btn-race">Race</button>
-                        <button class="btn btn-reset" disabled>Reset</button>
+                        <button class="btn btn-reset">Reset</button>
                         <button class="btn btn-generate">Generate</button>
                      </div>
                 </div>
@@ -229,7 +230,9 @@ class Garage {
         }
 
         createCar(params).then((data) => {
-            console.log('car is created', data);
+            console.log('Car is created', data);
+            this.listServices.addEntity(data);
+            this.initGarageList()
         })
     }
 
@@ -281,14 +284,14 @@ class Garage {
             startRacePromise.push(car.handleStartRace())
         })
         Promise.all(startRacePromise).then(() => {
-            this.raceList.forEach((car: CarService) => { 
+            this.raceList.forEach((car: CarService) => {
                 car.handleDriveEngine().then((data) => {
                     if (data && data.success == true && place === 1) {
-                        place++; 
+                        place++;
                         this.setWinner(car)
-                       
+
                     }
-                 })
+                })
             })
         })
     }
@@ -296,9 +299,9 @@ class Garage {
         document.querySelector('.btn-race').disabled = false
         document.querySelector('.btn-reset').disabled = true
 
+
         document.querySelectorAll('.winner').forEach((i) => i.innerText = '');
         this.raceList.forEach((car: CarService) => {
-
             car.handleStop()
         })
     }
@@ -313,7 +316,7 @@ class Garage {
             'wins': 1
         }
         getWinner(winnerParams.id).then((data) => {
-          
+
             if (data.id) {
                 winnerParams.wins = data.wins++;
                 if (data.time < winnerParams.time) {
@@ -324,8 +327,7 @@ class Garage {
                 createWinner(winnerParams)
             }
         })
-     
-        console.log('getWinnersList', getWinnersList());
+
 
     }
 
