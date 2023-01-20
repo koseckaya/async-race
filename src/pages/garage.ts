@@ -210,7 +210,7 @@ class Garage {
                     </form>
                     <div class="race-control">
                         <button class="btn btn-race">Race</button>
-                        <button class="btn btn-reset">Reset</button>
+                        <button class="btn btn-reset" disabled>Reset</button>
                         <button class="btn btn-generate">Generate</button>
                      </div>
                 </div>
@@ -272,6 +272,9 @@ class Garage {
     }
 
     handleRaceCars = () => {
+        document.querySelector('.btn-race').disabled = true
+        document.querySelector('.btn-reset').disabled = false
+
         const startRacePromise = []
         let place = 1;
         this.raceList.forEach((car: CarService) => {
@@ -290,6 +293,9 @@ class Garage {
         })
     }
     handleResetCars = () => {
+        document.querySelector('.btn-race').disabled = false
+        document.querySelector('.btn-reset').disabled = true
+
         document.querySelectorAll('.winner').forEach((i) => i.innerText = '');
         this.raceList.forEach((car: CarService) => {
 
