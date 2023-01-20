@@ -19,3 +19,53 @@ body {
     margin-left: calc(100% - 60px);
   }
 }
+
+
+@keyframes neon {
+  0%,
+  100% {
+    text-shadow: 0 0 1vw #FA1C16, 0 0 3vw #FA1C16, 0 0 10vw #FA1C16, 0 0 10vw #FA1C16, 0 0 .4vw #FED128, .5vw .5vw .1vw #806914;
+    color: #FED128;
+  }
+  50% {
+    text-shadow: 0 0 .5vw #800E0B, 0 0 1.5vw #800E0B, 0 0 5vw #800E0B, 0 0 5vw #800E0B, 0 0 .2vw #800E0B, .5vw .5vw .1vw #40340A;
+    color: #806914;
+  }
+}
+
+.table {
+	width: 100%;
+	border: none;
+	margin-bottom: 20px;
+  margin-top: 20px;
+  thead th {
+    font-weight: bold;
+    text-align: left;
+    border: none;
+    padding: 10px 15px;
+    background: #12262b;
+    font-size: 16px;
+  }
+  thead tr th:first-child {
+    border-radius: 8px 0 0 8px;
+  }
+  tr th:last-child {
+    border-radius: 0 8px 8px 0;
+  }
+  tbody td {
+    text-align: left;
+    border: none;
+    padding: 10px 15px;
+    font-size: 16px;
+    vertical-align: top;
+  }
+  tbody tr:nth-child(even){
+    background: #12262b;
+  }
+  tbody tr td:first-child {
+    border-radius: 8px 0 0 8px;
+  }
+  tbody tr td:last-child {
+    border-radius: 0 8px 8px 0;
+  }
+}

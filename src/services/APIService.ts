@@ -105,3 +105,9 @@ export const updateWinner = (params: WinnerItem) => {
         }
     }).then((data) => data.json())
 }
+
+export const deleteWinner= (id: number) => {
+    return fetch(ENDPOINTS.WINNERS + '/' + id, {
+        method: 'DELETE',
+    })
+}

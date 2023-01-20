@@ -74,15 +74,27 @@ class Winners {
         const container = document.querySelector('.container-winners')
         container?.innerHTML = `
             <div class="winners">
-                <span>page: ${this.listServices.getPage()}</span>
-                <ul>
+                <span class="winners__page">page: ${this.listServices.getPage()}</span>
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Car</th>
+                        <th>Name</th>
+                        <th>Wins</th>
+                        <th>Best time</th>
+                    </tr>
+                </thead>
+                <tbody>
                     ${winnersData.map((i) => {
-            return renderWinner(i);
-        }).join('')}
-                </ul>
+                        return renderWinner(i);
+                    }).join('')}
+                </tbody>
+            </table>
+
                 <button class="btn btn-prev-win" ${isPrevDisabled ? 'disabled' : ''}>Prev</button>
                 <button class="btn btn-next-win" ${isNextDisabled ? 'disabled' : ''}>Next</button>
-            
             </div>
         `
     }

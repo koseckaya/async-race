@@ -83,9 +83,6 @@ class Garage {
 
         const garageListContainer = document.querySelector('.garage-list')
         const pageCars = this.listServices.getDataByCurrentPage()
-        // pageCars.forEach(car => {
-
-        // });
 
         if (this.listServices.getTotal() === 0) {
             garageListContainer?.innerHTML = `<div class="garage">Garage is empty</div>`;
@@ -103,8 +100,6 @@ class Garage {
                 </div>
                 <button class="btn btn-prev" ${isPrevDisabled ? 'disabled' : ''}>Prev</button>
                 <button class="btn btn-next" ${isNextDisabled ? 'disabled' : ''}>Next</button>
-
-                <div class="car-container"></div>
             </div>
         `;
 
@@ -311,9 +306,8 @@ class Garage {
             'time': time,
             'wins': 1
         }
-        console.log('getWinner', getWinner(winnerParams.id));
         getWinner(winnerParams.id).then((data) => {
-            console.log('data', data);
+          
             if (data.id) {
                 winnerParams.wins = data.wins++;
                 if (data.time < winnerParams.time) {

@@ -95,11 +95,13 @@ class CarService {
         id?.value = selectedCar.id
     }
     handleRemoveCar = (e) => {
-        const targetId = e.target.closest('.garage__item').dataset.id;
-        deleteCar(+targetId).then(() => {
-            this.garage.listServices.removeEntity(+targetId)
+        const targetId = Number(e.target.closest('.garage__item').dataset.id);
+        deleteCar(targetId).then(() => {
+            this.garage.listServices.removeEntity(targetId)
             this.garage.initGarageList()
         })
+        deleteWinner(targetId)
+            .then(() => console.log('getWinnersList', getWinnersList()))
     }
     handleStart = (e) => {
         e.target.disabled = true;
