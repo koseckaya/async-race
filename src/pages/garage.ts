@@ -1,5 +1,5 @@
 //@ts-nocheck
-import { createCar, createWinner, deleteCar, getWinner, getWinnersList, updateCar } from "../services/APIService";
+import { createCar, createWinner, deleteCar, getWinner, getWinnersList, updateCar, updateWinner } from "../services/APIService";
 import { getCarsList } from "../services/APIService.ts";
 import { onNavigate } from "../utils/onNavigate.ts"
 import ListServices from './../services/ListServices.ts';
@@ -109,7 +109,6 @@ class Garage {
     }
 
     renderCarsContainers = () => {
-        console.log(this.listServices.getDataByCurrentPage());
         return this.listServices.getDataByCurrentPage().map((car) => {
             const containerClass = `car-container-${car.id}`;
             const newCar = new CarService(car, `.${containerClass}`, this)
@@ -230,7 +229,6 @@ class Garage {
         }
 
         createCar(params).then((data) => {
-            console.log('Car is created', data);
             this.listServices.addEntity(data);
             this.initGarageList()
         })
@@ -276,7 +274,7 @@ class Garage {
 
     handleRaceCars = () => {
         document.querySelector('.btn-race').disabled = true
-        document.querySelector('.btn-reset').disabled = false
+        
 
         const startRacePromise = []
         let place = 1;
@@ -297,7 +295,7 @@ class Garage {
     }
     handleResetCars = () => {
         document.querySelector('.btn-race').disabled = false
-        document.querySelector('.btn-reset').disabled = true
+      
 
 
         document.querySelectorAll('.winner').forEach((i) => i.innerText = '');
@@ -318,7 +316,7 @@ class Garage {
         getWinner(winnerParams.id).then((data) => {
 
             if (data.id) {
-                winnerParams.wins = data.wins++;
+                winnerParams.wins = ++data.wins;
                 if (data.time < winnerParams.time) {
                     winnerParams.time = data.time
                 }
@@ -327,8 +325,6 @@ class Garage {
                 createWinner(winnerParams)
             }
         })
-
-
     }
 
 }

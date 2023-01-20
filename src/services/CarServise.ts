@@ -2,7 +2,7 @@
 // const newCar = new CarService(entity, '.car-container')
 // newCar.init()
 
-import { deleteCar, driveEngine, startEngine, stopEngine } from "./APIService";
+import { deleteCar, deleteWinner, driveEngine, startEngine, stopEngine } from "./APIService";
 import { renderCarSvg } from "../helpers/car";
 
 
@@ -103,7 +103,7 @@ class CarService {
             this.garage.initGarageList()
         })
         deleteWinner(targetId)
-            .then(() => console.log('getWinnersList', getWinnersList()))
+            
     }
     handleStart = (e) => {
         e.target.disabled = true;
@@ -146,7 +146,7 @@ class CarService {
    
     handleStop = (e) => {
         this.getContainerEl().querySelector('.btn-start').disabled = false
-        this.abortController.abort()
+        if (this.abortController) this.abortController.abort()
         stopEngine(this.car.id);
         this.carReset();
         this.getContainerEl().querySelector('.btn-stop').disabled = true;
@@ -158,7 +158,6 @@ class CarService {
         car.style.animationPlayState = "running";
         const time = (this.raceParams.distance / this.raceParams.velocity / 1000).toFixed(2);
         car.style.animationDuration = `${time}s`;
-        console.log('time', time, this.car.id);
     }
 
     carPause = () => {
