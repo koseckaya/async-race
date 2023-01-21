@@ -26,10 +26,7 @@ class Winners {
     }
 
     bind = () => {
-        const timeUp = document.querySelector('.btn-time-up')
-        const timeDown = document.querySelector('.btn-time-down')
-        const winsUp = document.querySelector('.btn-wins-up')
-        const winsDown = document.querySelector('.btn-wins-down')
+      
     }
 
     afterRender = () => {
@@ -53,12 +50,19 @@ class Winners {
         nextBtn?.addEventListener('click', this.handleNext)
         const prevBtn = document.querySelector('.btn-prev-win')
         prevBtn?.addEventListener('click', this.handlePrev)
+
+        const timeUp = document.querySelector('.btn-time-up')
+        timeUp?.addEventListener('click', this.handleSortTimeUp)
+        const timeDown = document.querySelector('.btn-time-down')
+        timeDown?.addEventListener('click', this.handleSortTimeDown)
+        const winsUp = document.querySelector('.btn-wins-up')
+        winsUp?.addEventListener('click', this.handleWinsUp)
+        const winsDown = document.querySelector('.btn-wins-down')
+        winsDown?.addEventListener('click', this.handleWinsDown)
     }
 
     getWinnersData = () => {
         const winners = this.listServices?.getDataByCurrentPage();
-
-
         return winners?.reduce((acc, winner) => {
             acc.push({
                 ...winner,
@@ -125,6 +129,26 @@ class Winners {
         this.initWinnersList()
     }
 
+    handleSortTimeUp = (e) => {
+        this.listServices.setSortBy('time')
+        this.listServices.setSortOrient('asc')
+        this.initWinnersList()
+    }
+    handleSortTimeDown = (e) => {
+        this.listServices.setSortBy('time')
+        this.listServices.setSortOrient('desc')
+        this.initWinnersList()
+    }
 
+    handleWinsUp = (e) => {
+        this.listServices?.setSortBy('wins')
+        this.listServices?.setSortOrient('desc')
+        this.initWinnersList()
+    }
+    handleWinsDown = (e) => {
+        this.listServices.setSortBy('wins')
+        this.listServices.setSortOrient('asc')
+        this.initWinnersList()
+    }
 }
 export default Winners

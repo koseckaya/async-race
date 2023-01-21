@@ -1,9 +1,12 @@
+//@ts-nocheck
 import { CarItem } from "../types";
 
 class ListServices {
     items: CarItem[] = []
     page = 1
     perPage = 7
+    sortBy: string | null = null
+    sortOrient: string | null = null
     constructor(items: CarItem[], perPage: number) {
         this.items = items;
         this.perPage = perPage;
@@ -19,6 +22,7 @@ class ListServices {
 
     getDataByCurrentPage = (): CarItem[] => { 
         const startWith = (this.page - 1) * this.perPage
+        this.sortItems()
         const itemsOnPage = this.items.slice(startWith, startWith + this.perPage)
         return itemsOnPage;
     }
@@ -61,6 +65,34 @@ class ListServices {
     isLastPage = ():boolean => {
         return this.getPage() === this.getTotalPages() ? true : false;
     }
+    sortItems = () => {
+        if (this.sortBy && this.sortOrient) {
+            this.items = this.items.sort((car1, car2) => {
+                if (car1[this.sortBy] > car2[this.sortBy]) {
+                    if (this.sortOrient == 'asc') {
+                         return 1
+                    } else {
+                        return -1
+                     }
+                } else {
+                    if (this.sortOrient == 'asc') {
+                        return -1
+                    } else {
+                        return 1
+                    }
+                }
+           }) 
+        }
+        
+    }
+
+    setSortBy = (by) => {
+        this.sortBy = by
+    }
+    setSortOrient = (orient) => {
+        this.sortOrient = orient
+    }
+   
 
 }
 export default ListServices
