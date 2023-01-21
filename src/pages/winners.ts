@@ -26,6 +26,10 @@ class Winners {
     }
 
     bind = () => {
+        const timeUp = document.querySelector('.btn-time-up')
+        const timeDown = document.querySelector('.btn-time-down')
+        const winsUp = document.querySelector('.btn-wins-up')
+        const winsDown = document.querySelector('.btn-wins-down')
     }
 
     afterRender = () => {
@@ -80,8 +84,21 @@ class Winners {
                         <th>Id</th>
                         <th>Car</th>
                         <th>Name</th>
-                        <th>Wins</th>
-                        <th>Best time</th>
+                        <th>
+                            <div class="wins">Wins
+                            <span class="wins-buttons">
+                                <button class="btn btn-wins btn-wins-up">▲</button>
+                                <button class="btn btn-wins btn-wins-down">▼</button>
+                            </span></div>
+                        </th>
+                        <th>
+                            <div class="best-time">Best time
+                            <span class="best-time-buttons">
+                                <button class="btn btn-time btn-time-up">▲</button>
+                                <button class="btn btn-time btn-time-down">▼</button>
+                            </span>
+                            </div>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>

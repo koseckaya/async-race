@@ -21,7 +21,7 @@ class CarService {
         this.car = car
         this.containerSelector = containerSelector
         this.garage = garage;
-    
+
     }
 
     getContainerEl = () => {
@@ -51,8 +51,6 @@ class CarService {
         const carStop = this.getContainerEl().querySelector('.btn-stop')
         carStop.addEventListener('click', this.handleStop)
 
-        // const carReset = this.getContainerEl().querySelector('.btn-reset')
-        // carReset.addEventListener('click', this.handleReset)
     }
     render = () => {
         this.getContainerEl().innerHTML = this.renderCar(this.car)
@@ -65,17 +63,18 @@ class CarService {
         <div class="garage__item" data-id="${car.id}"> 
             <div class="car__name">${car.id} ${car.name}</div>
             <div class ="rase-btns">
-                <div class="car__btns">
-                    <button class="btn btn-car btn-remove"></button>
-                    <button class="btn btn-car btn-update"></button>
-                </div>
                 <div class="btns-control">
                     <button class="btn btn-control btn-start">Start</button>
                     <button class="btn btn-control btn-stop" disabled>Stop</button>
                 </div>
+                 <div class="car__btns">
+                    <button class="btn btn-car btn-remove"></button>
+                    <button class="btn btn-car btn-update"></button>
+                </div>
             </div>
             <div class="car__control">
                 <div class="car-wrap">
+
                     <div class="car__wrapper">
                         ${renderCarSvg(car.color)}
                     </div>
@@ -103,15 +102,15 @@ class CarService {
             this.garage.initGarageList()
         })
         deleteWinner(targetId)
-            
+
     }
     handleStart = (e) => {
         e.target.disabled = true;
-      
+
         this.handleStartRace()
             .then(() => {
                 this.handleDriveEngine()
-        })
+            })
     }
 
     handleStartRace = () => {
@@ -129,27 +128,33 @@ class CarService {
         this.engineStatus = 'drive'
         this.abortController = new AbortController();
         let signal = this.abortController.signal;
-        
+
         let engine = driveEngine(targetId, signal)
             .then(data => {
                 console.log(`${targetId} доехал! `)
                 return data
             })
             .catch((err) => {
-                console.log(`${targetId} сломался!`)
+                if (err.name !== "AbortError") {
+                    console.log(`${targetId} сломался!`)
+                    this.carBroken()
+                } 
                 this.carPause();
-               
             })
         this.carStart()
         return engine;
     }
-   
+
     handleStop = (e) => {
         this.getContainerEl().querySelector('.btn-start').disabled = false
-        if (this.abortController) this.abortController.abort()
+        if (this.abortController) {
+            this.abortController.abort()
+        }
         stopEngine(this.car.id);
         this.carReset();
         this.getContainerEl().querySelector('.btn-stop').disabled = true;
+
+        this.getContainerEl().querySelector('#blunt_container').style.display = 'none'
     }
 
     carStart = () => {
@@ -163,11 +168,16 @@ class CarService {
     carPause = () => {
         const car = this.getContainerEl().querySelector('.car__wrapper')
         car.style.animationPlayState = "paused";
+  
     }
 
     carReset = () => {
         const car = this.getContainerEl().querySelector('.car__wrapper')
         car.classList.remove('ride')
+        this.getContainerEl().querySelector('#blunt_container').style.display = 'none'
+    }
+    carBroken = () => {
+        this.getContainerEl().querySelector('#blunt_container').style.display = 'block'
     }
 }
 export default CarService;

@@ -112,3 +112,4 @@ export const deleteWinner= (id: number) => {
         method: 'DELETE',
     })
 }
+

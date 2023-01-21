@@ -94,12 +94,14 @@ class Garage {
         garageListContainer?.innerHTML = `
             <div class="garage">
                 <span>total: ${this.listServices.getTotal()}</span>
-                <span>page: ${this.listServices.getPage()}</span>
+               
+                <button class="btn btn-prev" ${isPrevDisabled ? 'disabled' : ''}>➤</button>
+                 <span class="garage__page">page: ${this.listServices.getPage()}</span>
+                <button class="btn btn-next" ${isNextDisabled ? 'disabled' : ''}>➤</button>
                 <div class="garage__items track">
                     ${this.renderCarsContainers()}
                 </div>
-                <button class="btn btn-prev" ${isPrevDisabled ? 'disabled' : ''}>Prev</button>
-                <button class="btn btn-next" ${isNextDisabled ? 'disabled' : ''}>Next</button>
+
             </div>
         `;
 
@@ -212,7 +214,7 @@ class Garage {
                         <button class="btn btn-race">Race</button>
                         <button class="btn btn-reset">Reset</button>
                         <button class="btn btn-generate">Generate</button>
-                     </div>
+                    </div>
                 </div>
             </div>
         `
