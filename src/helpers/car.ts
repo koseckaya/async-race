@@ -1,6 +1,7 @@
 
 
-import { CarItem, CarRequest } from "../types";
+import { DEFAULT_COLOR } from "../constants";
+import { CarItem } from "../types";
 
 export const renderCar = (car: CarItem): string => {
    return `
@@ -59,10 +60,10 @@ const getRandomName = (): string => {
    const carModel = carModels[Math.floor(Math.random() * carModels.length)];
    return `${carBrand} ${carModel}`;
 }
-const getRandomCarData = (): CarRequest => {
+const getRandomCarData = (): Partial<CarItem> => {
    return { name: getRandomName(), color: getRandomColor() };
 }
-export const getRandomCarsList = (n: number = 100): Partial<CarItem>[] => {
+export const getRandomCarsList = (n = 100): Partial<CarItem>[] => {
    const carsArray = []
    for (let i = 0; i < n; i++) {
       carsArray.push(getRandomCarData())
@@ -70,7 +71,7 @@ export const getRandomCarsList = (n: number = 100): Partial<CarItem>[] => {
    return carsArray;
 }
 
-export const renderCarSvg = (color: string = '#000'): string => {
+export const renderCarSvg = (color = DEFAULT_COLOR): string => {
    return `
    <div class="car__img">
       <div id="blunt_container">
@@ -419,7 +420,7 @@ export const renderCarSvg = (color: string = '#000'): string => {
     `
 }
 
-const renderWinCarSvg = (color: string = '#000'): string => {
+const renderWinCarSvg = (color = DEFAULT_COLOR): string => {
    return `
    <?xml version="1.0" encoding="iso-8859-1"?>
 <svg fill="${color}" height="800px" width="800px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 

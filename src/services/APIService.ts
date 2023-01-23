@@ -1,4 +1,4 @@
-import { CarItem, WinnerItem } from "../types";
+import { CarItem, EngineStartResponse, WinnerItem } from "../types";
 
 const BACKEND_URL = 'http://localhost:3000/';
 const ENDPOINTS = {
@@ -42,14 +42,14 @@ export const updateCar = (id: number, params: CarItem) => {
 }
 
 
-export const startEngine = (id: number) => {
-
+export const startEngine = (id: number): Promise<EngineStartResponse> => {
     return fetch(ENDPOINTS.ENGINE + '?id=' + id + '&status=started', {
         method: 'PATCH',
         headers: {
             'Content-Type': 'application/json'
         }
-    }).then((data) => data.json())
+    }).then(res => res.json())
+      .then(data => data as EngineStartResponse)
 }
 
 export const driveEngine = (id: number, signal: AbortSignal | null = null) => {

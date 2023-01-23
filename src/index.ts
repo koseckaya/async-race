@@ -5,9 +5,7 @@ import Winners from './pages/winners';
 import Header from './pages/header';
 import ListServices from './services/ListServices';
 import { CarItem, WinnerItem, Router } from './types';
-
-const GARAGE_PER_PAGE = 7;
-const WINNERS_PER_PAGE = 10;
+import { GARAGE_PER_PAGE, WINNERS_PER_PAGE } from './constants';
 
 export const garageListService = new ListServices<CarItem>([], GARAGE_PER_PAGE)
 export const winnersListService = new ListServices<WinnerItem>([], WINNERS_PER_PAGE)

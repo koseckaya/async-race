@@ -1,14 +1,12 @@
-import { getCarsList, createCar, createWinner, deleteCar, getWinner, getWinnersList, updateCar, updateWinner } from "../services/APIService";
-import { onNavigate } from "../utils/onNavigate"
+import { getCarsList, createCar, createWinner, deleteCar, getWinner, updateCar, updateWinner } from "../services/APIService";
 import ListServices from './../services/ListServices';
-import { getRandomCarsList, renderCar } from './../helpers/car';
+import { getRandomCarsList } from './../helpers/car';
 import { DEFAULT_COLOR } from "../constants";
 import CarService from "../services/CarServise";
-import { CarItem, EngineDriveResponse, RouteModule, WinnerItem } from "../types";
+import { CarItem, EngineDriveResponse, EngineStartResponse, GarageRouteModule, WinnerItem } from "../types";
 
-const GARAGE_PER_PAGE = 7
 
-class Garage implements RouteModule<CarItem> {
+class Garage implements GarageRouteModule {
     listServices: ListServices<CarItem> | null = null
     raceList: CarService[] = []
 
@@ -31,7 +29,9 @@ class Garage implements RouteModule<CarItem> {
         this.getGarage()
     }
 
-    bind = () => { }
+    bind = () => { 
+        console.log('');
+    }
 
     afterRender = () => {
         this.initFormCar()
@@ -81,7 +81,6 @@ class Garage implements RouteModule<CarItem> {
         this.resetRaceList();
 
         const garageListContainer = document.querySelector('.garage-list') as HTMLElement
-        const pageCars = this.listServices?.getDataByCurrentPage()
         if (this.listServices?.getTotal() === 0) {
             garageListContainer.innerHTML = `<div class="garage">Garage is empty</div>`;
             return;
@@ -142,8 +141,8 @@ class Garage implements RouteModule<CarItem> {
     }
 
     handleRemoveCar = (e: Event) => {
-        let target = e.target as HTMLButtonElement
-        let closestGarage = target.closest('.garage__item') as HTMLElement
+        const target = e.target as HTMLButtonElement
+        const closestGarage = target.closest('.garage__item') as HTMLElement
         const targetId = Number(closestGarage?.dataset.id);
         deleteCar(targetId).then(() => {
             this.listServices?.removeEntity(targetId)
@@ -152,9 +151,8 @@ class Garage implements RouteModule<CarItem> {
     }
 
     handleSelectCar = (e: Event) => {
-        // const targetId = e.target.closest('li').dataset.id;
-        let target = e.target as HTMLButtonElement
-        let closestGarage = target.closest('.garage__item') as HTMLElement
+        const target = e.target as HTMLButtonElement
+        const closestGarage = target.closest('.garage__item') as HTMLElement
         const targetId = Number(closestGarage?.dataset.id);
 
         const color = document.getElementById('colorUpdate') as HTMLInputElement
@@ -168,13 +166,10 @@ class Garage implements RouteModule<CarItem> {
 
     // Garage Form
     initFormCar = () => {
-        //this.unbindFormCar()
         (document.querySelector('.createCar') as HTMLElement).innerHTML = ''
         this.renderFormCar()
         this.bindFormCar()
     }
-
-    // unbindFormCar = () => { }
 
     bindFormCar = () => {
         const createBtn = document.querySelector('.btn-createCar')
@@ -230,7 +225,7 @@ class Garage implements RouteModule<CarItem> {
             const params: CarItem = {} as CarItem;
 
             for (const [key, value] of formData) {
-                params[key as string] = value;
+                params[key as string] = value as string;
             }
 
             createCar(params).then((data) => {
@@ -248,7 +243,7 @@ class Garage implements RouteModule<CarItem> {
         const params: CarItem = {} as CarItem;
 
         for (const [key, value] of formData) {
-            params[key] = value;
+            params[key] = value as string;
         }
         const { id, ...otherParams } = params
         if (!id) return;
@@ -261,7 +256,7 @@ class Garage implements RouteModule<CarItem> {
 
     handleGenerateCars = () => {
         const newCars = getRandomCarsList()
-        const carsPromises: Promise<any>[] = []
+        const carsPromises: Promise<CarItem>[] = []
         newCars.forEach((item: Partial<CarItem>) => carsPromises.push(createCar(item)))
         Promise.all(carsPromises).then((data) => {
             this.listServices?.addEntities(data)
@@ -281,7 +276,7 @@ class Garage implements RouteModule<CarItem> {
     handleRaceCars = () => {
         const raceBtn = document.querySelector('.btn-race') as HTMLButtonElement
         raceBtn.disabled = true
-        const startRacePromise: Promise<any>[] = []
+        const startRacePromise: Promise<EngineStartResponse>[] = []
         let place = 1;
         this.raceList.forEach((car: CarService) => {
             startRacePromise.push(car.handleStartRace())
@@ -312,7 +307,7 @@ class Garage implements RouteModule<CarItem> {
 
     setWinner = (car: CarService) => {
         if (car.raceParams && car.raceParams.distance && car.raceParams.velocity) {
-            let time = (car.raceParams.distance / car.raceParams.velocity / 1000).toFixed(2)
+            const time = (car.raceParams.distance / car.raceParams.velocity / 1000).toFixed(2)
             const container = document.querySelector(`${car.containerSelector} .winner`) as HTMLDivElement
             container.innerText = `WINNER ${car?.car?.name} - ${time} s`
             const carId = car?.car?.id

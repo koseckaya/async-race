@@ -1,12 +1,10 @@
 import { renderWinner } from "../helpers/car";
 import { getWinnersList } from "../services/APIService";
 import ListServices from "../services/ListServices";
-import { onNavigate } from "../utils/onNavigate"
-import { garageListService } from './../index';
-import { CarItem, RouteModule, WinCarItem, WinnerItem } from './../types';
+import { CarItem, WinCarItem, WinnerItem, WinnerRouteModule } from './../types';
 
 
-class Winners implements RouteModule<WinnerItem> {
+class Winners implements WinnerRouteModule {
     listServices: ListServices<WinnerItem> | null = null
     garageListService: ListServices<CarItem> | null = null
 
@@ -26,7 +24,7 @@ class Winners implements RouteModule<WinnerItem> {
     }
 
     bind = () => {
-
+        console.log('');
     }
 
     afterRender = () => {

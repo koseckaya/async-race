@@ -9,7 +9,7 @@ import { CarItem, EngineDriveResponse, EngineStartResponse } from "../types";
 
 class CarService {
     car: CarItem | null = null;
-    containerSelector: string = '';
+    containerSelector = '';
     containerEl: Element | null = null
     garage: Garage | null = null
     raceParams: EngineStartResponse | null = null
@@ -36,7 +36,9 @@ class CarService {
         this.bind()
     }
 
-    unbind = (): void => { }
+    unbind = (): void => {
+        return;
+    }
 
     bind = (): void => {
         const removeCar = this.getContainerEl()?.querySelector('.btn-remove')
@@ -90,8 +92,8 @@ class CarService {
     `;
     }
     handleSelectCar = (e: Event) => {
-        let target = e.target as HTMLButtonElement
-        let closestGarage = target.closest('.garage__item') as HTMLElement
+        const target = e.target as HTMLButtonElement
+        const closestGarage = target.closest('.garage__item') as HTMLElement
         const targetId = Number(closestGarage?.dataset.id);
         const color = document.getElementById('colorUpdate') as HTMLInputElement
         const name = document.getElementById('nameUpdate') as HTMLInputElement
@@ -104,8 +106,8 @@ class CarService {
         }
     }
     handleRemoveCar = (e: Event) => {
-        let target = e.target as HTMLButtonElement
-        let closestGarage = target.closest('.garage__item') as HTMLElement
+        const target = e.target as HTMLButtonElement
+        const closestGarage = target.closest('.garage__item') as HTMLElement
         const targetId = Number(closestGarage?.dataset.id);
 
         deleteCar(targetId).then(() => {
@@ -116,7 +118,7 @@ class CarService {
 
     }
     handleStart = (e: Event) => {
-        let target = e.target as HTMLButtonElement
+        const target = e.target as HTMLButtonElement
         target.disabled = true;
 
         this.handleStartRace()
@@ -125,16 +127,18 @@ class CarService {
             })
     }
 
-    handleStartRace = () => {
+    handleStartRace = (): Promise<EngineStartResponse> => {
         const startBtn = this.getContainerEl()?.querySelector('.btn-start') as HTMLButtonElement
         const stopBtn = this.getContainerEl()?.querySelector('.btn-stop') as HTMLButtonElement
         startBtn.disabled = true
         const targetId = Number(this.car?.id);
         this.engineStatus = 'started'
-        return startEngine(targetId).then((data) => {
-            stopBtn.disabled = false
-            this.raceParams = data;
-        })
+        return startEngine(targetId)
+            .then((data) => {
+                stopBtn.disabled = false
+                this.raceParams = data;
+                return data;
+            })
     }
 
     handleDriveEngine = (): Promise<EngineDriveResponse> | void => {
@@ -144,9 +148,9 @@ class CarService {
         const targetId = this.car.id;
         this.engineStatus = 'drive'
         this.abortController = new AbortController();
-        let signal = this.abortController.signal;
+        const signal = this.abortController.signal;
 
-        let engine = driveEngine(targetId, signal)
+        const engine = driveEngine(targetId, signal)
             .then(data => {
                 console.log(`${targetId} доехал! `)
                 return data

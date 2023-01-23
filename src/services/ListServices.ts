@@ -4,8 +4,8 @@ class ListServices<T = Entity> {
     items: T[] = []
     page = 1
     perPage = 7
-    sortBy: string = ''
-    sortOrient: string = ''
+    sortBy = ''
+    sortOrient = ''
     constructor(items: T[], perPage: number) {
         this.items = items;
         this.perPage = perPage;
