@@ -1,30 +1,28 @@
-//@ts-nocheck
-// const newCar = new CarService(entity, '.car-container')
-// newCar.init()
 
 import { deleteCar, deleteWinner, driveEngine, startEngine, stopEngine } from "./APIService";
 import { renderCarSvg } from "../helpers/car";
+import Garage from "../pages/garage";
+import { CarItem, EngineDriveResponse, EngineStartResponse } from "../types";
 
 
 
 
 class CarService {
-    car = null;
-    containerSelector = '';
-    containerEl = null
+    car: CarItem | null = null;
+    containerSelector: string = '';
+    containerEl: Element | null = null
     garage: Garage | null = null
-    raceParams = null
-    engineStatus = null
-    abortController = null
+    raceParams: EngineStartResponse | null = null
+    engineStatus: string | null = null
+    abortController: AbortController | null = null
 
-    constructor(car, containerSelector, garage) {
+    constructor(car: CarItem, containerSelector: string, garage: Garage) {
         this.car = car
         this.containerSelector = containerSelector
         this.garage = garage;
-
     }
 
-    getContainerEl = () => {
+    getContainerEl = (): Element | null => {
         if (!this.containerEl) {
             this.containerEl = document.querySelector(this.containerSelector)
         }
@@ -32,32 +30,39 @@ class CarService {
         return this.containerEl;
     }
 
-    init = () => {
+    init = (): void => {
         this.unbind()
         this.render()
         this.bind()
     }
-    unbind = () => { }
-    bind = () => {
-        const removeCar = this.getContainerEl().querySelector('.btn-remove')
-        removeCar.addEventListener('click', this.handleRemoveCar)
 
-        const updateCar = this.getContainerEl().querySelector('.btn-update')
-        updateCar.addEventListener('click', this.handleSelectCar)
+    unbind = (): void => { }
 
-        const carStart = this.getContainerEl().querySelector('.btn-start')
-        carStart.addEventListener('click', this.handleStart)
+    bind = (): void => {
+        const removeCar = this.getContainerEl()?.querySelector('.btn-remove')
+        if (removeCar) {
+            removeCar.addEventListener('click', this.handleRemoveCar)
+        }
 
-        const carStop = this.getContainerEl().querySelector('.btn-stop')
-        carStop.addEventListener('click', this.handleStop)
+        const updateCar = this.getContainerEl()?.querySelector('.btn-update')
+        updateCar?.addEventListener('click', this.handleSelectCar)
+
+        const carStart = this.getContainerEl()?.querySelector('.btn-start')
+        carStart?.addEventListener('click', this.handleStart)
+
+        const carStop = this.getContainerEl()?.querySelector('.btn-stop')
+        carStop?.addEventListener('click', this.handleStop)
 
     }
     render = () => {
-        this.getContainerEl().innerHTML = this.renderCar(this.car)
+        const container = this.getContainerEl();
+        if (container && this.car) {
+            container.innerHTML = this.renderCar(this.car)
+        }
     }
 
 
-    renderCar = car => {
+    renderCar = (car: CarItem): string => {
         return `
         <div class="winner"></div>
         <div class="garage__item" data-id="${car.id}"> 
@@ -84,28 +89,35 @@ class CarService {
         </div>
     `;
     }
-    handleSelectCar = (e) => {
-        const targetId = e.target.closest('.garage__item').dataset.id;
-        const color = document.getElementById('colorUpdate')
-        const name = document.getElementById('nameUpdate')
-        const id = document.getElementById('idUpdate')
-        const selectedCar = this.garage.listServices.getEntity(+targetId)
-
-        color?.value = selectedCar.color
-        name?.value = selectedCar.name
-        id?.value = selectedCar.id
+    handleSelectCar = (e: Event) => {
+        let target = e.target as HTMLButtonElement
+        let closestGarage = target.closest('.garage__item') as HTMLElement
+        const targetId = Number(closestGarage?.dataset.id);
+        const color = document.getElementById('colorUpdate') as HTMLInputElement
+        const name = document.getElementById('nameUpdate') as HTMLInputElement
+        const id = document.getElementById('idUpdate') as HTMLInputElement
+        const selectedCar = this.garage?.listServices?.getEntity(+targetId)
+        if (color && name && id && selectedCar) {
+            color.value = selectedCar.color
+            name.value = selectedCar.name
+            id.value = `${selectedCar.id}`
+        }
     }
-    handleRemoveCar = (e) => {
-        const targetId = Number(e.target.closest('.garage__item').dataset.id);
+    handleRemoveCar = (e: Event) => {
+        let target = e.target as HTMLButtonElement
+        let closestGarage = target.closest('.garage__item') as HTMLElement
+        const targetId = Number(closestGarage?.dataset.id);
+
         deleteCar(targetId).then(() => {
-            this.garage.listServices.removeEntity(targetId)
-            this.garage.initGarageList()
+            this.garage?.listServices?.removeEntity(targetId)
+            this.garage?.initGarageList()
         })
         deleteWinner(targetId)
 
     }
-    handleStart = (e) => {
-        e.target.disabled = true;
+    handleStart = (e: Event) => {
+        let target = e.target as HTMLButtonElement
+        target.disabled = true;
 
         this.handleStartRace()
             .then(() => {
@@ -114,16 +126,21 @@ class CarService {
     }
 
     handleStartRace = () => {
-        this.getContainerEl().querySelector('.btn-start').disabled = true
-        const targetId = this.car.id;
+        const startBtn = this.getContainerEl()?.querySelector('.btn-start') as HTMLButtonElement
+        const stopBtn = this.getContainerEl()?.querySelector('.btn-stop') as HTMLButtonElement
+        startBtn.disabled = true
+        const targetId = Number(this.car?.id);
         this.engineStatus = 'started'
         return startEngine(targetId).then((data) => {
-            this.getContainerEl().querySelector('.btn-stop').disabled = false
+            stopBtn.disabled = false
             this.raceParams = data;
         })
     }
 
-    handleDriveEngine = () => {
+    handleDriveEngine = (): Promise<EngineDriveResponse> | void => {
+        if (!this.car) {
+            return;
+        }
         const targetId = this.car.id;
         this.engineStatus = 'drive'
         this.abortController = new AbortController();
@@ -138,46 +155,51 @@ class CarService {
                 if (err.name !== "AbortError") {
                     console.log(`${targetId} сломался!`)
                     this.carBroken()
-                } 
+                }
                 this.carPause();
             })
         this.carStart()
         return engine;
     }
 
-    handleStop = (e) => {
-        this.getContainerEl().querySelector('.btn-start').disabled = false
+    handleStop = () => {
+        const startBtn = this.getContainerEl()?.querySelector('.btn-start') as HTMLButtonElement
+        const stopBtn = this.getContainerEl()?.querySelector('.btn-stop') as HTMLButtonElement
+        startBtn.disabled = false
         if (this.abortController) {
             this.abortController.abort()
         }
-        stopEngine(this.car.id);
+        if (this.car) stopEngine(this.car.id);
         this.carReset();
-        this.getContainerEl().querySelector('.btn-stop').disabled = true;
-
-        this.getContainerEl().querySelector('#blunt_container').style.display = 'none'
+        stopBtn.disabled = true;
+        const bluntContainer = this.getContainerEl()?.querySelector('#blunt_container') as HTMLDivElement
+        bluntContainer.style.display = 'none'
     }
 
     carStart = () => {
-        const car = this.getContainerEl().querySelector('.car__wrapper')
+        const car = this.getContainerEl()?.querySelector('.car__wrapper') as HTMLDivElement
         car.classList.add('ride')
         car.style.animationPlayState = "running";
-        const time = (this.raceParams.distance / this.raceParams.velocity / 1000).toFixed(2);
-        car.style.animationDuration = `${time}s`;
+        if (this.raceParams) {
+            const time = (this.raceParams.distance / this.raceParams.velocity / 1000).toFixed(2);
+            car.style.animationDuration = `${time}s`;
+        }
     }
 
     carPause = () => {
-        const car = this.getContainerEl().querySelector('.car__wrapper')
+        const car = this.getContainerEl()?.querySelector('.car__wrapper') as HTMLDivElement
         car.style.animationPlayState = "paused";
-  
     }
 
     carReset = () => {
-        const car = this.getContainerEl().querySelector('.car__wrapper')
+        const car = this.getContainerEl()?.querySelector('.car__wrapper') as HTMLDivElement
         car.classList.remove('ride')
-        this.getContainerEl().querySelector('#blunt_container').style.display = 'none'
+        const bluntContainer = this.getContainerEl()?.querySelector('#blunt_container') as HTMLDivElement
+        bluntContainer.style.display = 'none'
     }
     carBroken = () => {
-        this.getContainerEl().querySelector('#blunt_container').style.display = 'block'
+        const bluntContainer = this.getContainerEl()?.querySelector('#blunt_container') as HTMLDivElement
+        bluntContainer.style.display = 'block'
     }
 }
 export default CarService;

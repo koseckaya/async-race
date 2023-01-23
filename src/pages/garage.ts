@@ -1,23 +1,22 @@
-//@ts-nocheck
-import { createCar, createWinner, deleteCar, getWinner, getWinnersList, updateCar, updateWinner } from "../services/APIService";
-import { getCarsList } from "../services/APIService.ts";
-import { onNavigate } from "../utils/onNavigate.ts"
-import ListServices from './../services/ListServices.ts';
+import { getCarsList, createCar, createWinner, deleteCar, getWinner, getWinnersList, updateCar, updateWinner } from "../services/APIService";
+import { onNavigate } from "../utils/onNavigate"
+import ListServices from './../services/ListServices';
 import { getRandomCarsList, renderCar } from './../helpers/car';
 import { DEFAULT_COLOR } from "../constants";
 import CarService from "../services/CarServise";
+import { CarItem, EngineDriveResponse, RouteModule, WinnerItem } from "../types";
 
 const GARAGE_PER_PAGE = 7
 
-class Garage {
-    listServices: ListServices | null = null
-    raceList = []
+class Garage implements RouteModule<CarItem> {
+    listServices: ListServices<CarItem> | null = null
+    raceList: CarService[] = []
 
-    constructor(listService) {
+    constructor(listService: ListServices<CarItem>) {
         this.listServices = listService;
     }
 
-    render = () => {
+    render = (): string => {
         return ` 
         <div class="container-garage">
             <div class="createCar">
@@ -32,9 +31,7 @@ class Garage {
         this.getGarage()
     }
 
-    bind = () => {
-
-    }
+    bind = () => { }
 
     afterRender = () => {
         this.initFormCar()
@@ -43,17 +40,19 @@ class Garage {
 
     getGarage = () => {
         getCarsList()
-            .then((data) => data.json())
-            .then((data) => {
-                this.listServices.setItems(data)
-                this.initGarageList()
+            .then((data: CarItem[]) => {
+                if (this.listServices) {
+                    this.listServices.setItems(data)
+                    this.initGarageList()
+                }
             })
     }
 
     // GarageList
     initGarageList = () => {
         this.unbindGarageList()
-        document.querySelector('.garage-list')?.innerHTML = '';
+        const garageListContainer = document.querySelector('.garage-list') as HTMLElement
+        garageListContainer.innerHTML = '';
         this.renderGarage()
         this.bindGarageList()
     }
@@ -81,41 +80,34 @@ class Garage {
     renderGarage = () => {
         this.resetRaceList();
 
-        const garageListContainer = document.querySelector('.garage-list')
-        const pageCars = this.listServices.getDataByCurrentPage()
-
-        if (this.listServices.getTotal() === 0) {
-            garageListContainer?.innerHTML = `<div class="garage">Garage is empty</div>`;
+        const garageListContainer = document.querySelector('.garage-list') as HTMLElement
+        const pageCars = this.listServices?.getDataByCurrentPage()
+        if (this.listServices?.getTotal() === 0) {
+            garageListContainer.innerHTML = `<div class="garage">Garage is empty</div>`;
             return;
         }
-        const isPrevDisabled = this.listServices.isFirstPage()
-        const isNextDisabled = this.listServices.isLastPage()
-
-        garageListContainer?.innerHTML = `
+        const isPrevDisabled = this.listServices?.isFirstPage()
+        const isNextDisabled = this.listServices?.isLastPage()
+        garageListContainer.innerHTML = `
             <div class="garage">
-                <span>total: ${this.listServices.getTotal()}</span>
+                <span>total: ${this.listServices?.getTotal()}</span>
                
                 <button class="btn btn-prev" ${isPrevDisabled ? 'disabled' : ''}>➤</button>
-                 <span class="garage__page">page: ${this.listServices.getPage()}</span>
+                 <span class="garage__page">page: ${this.listServices?.getPage()}</span>
                 <button class="btn btn-next" ${isNextDisabled ? 'disabled' : ''}>➤</button>
                 <div class="garage__items track">
                     ${this.renderCarsContainers()}
                 </div>
-
-            </div>
-        `;
-
+            </div> `;
         this.initRaceList();
-
         return;
     }
 
     renderCarsContainers = () => {
-        return this.listServices.getDataByCurrentPage().map((car) => {
+        return this.listServices?.getDataByCurrentPage().map((car) => {
             const containerClass = `car-container-${car.id}`;
-            const newCar = new CarService(car, `.${containerClass}`, this)
+            const newCar: CarService = new CarService(car, `.${containerClass}`, this)
             this.raceList.push(newCar)
-
             return `<div class="${containerClass} car-container"></div>`
         }).join('');
     }
@@ -134,45 +126,55 @@ class Garage {
     }
 
     handlePrev = () => {
-        const prevNumber = this.listServices.getPage() - 1
-        this.listServices.setPage(prevNumber)
-        this.initGarageList()
+        if (this.listServices) {
+            const prevNumber = this.listServices.getPage() - 1
+            this.listServices.setPage(prevNumber)
+            this.initGarageList()
+        }
     }
 
     handleNext = () => {
-        const nextNumber = this.listServices.getPage() + 1
-        this.listServices.setPage(nextNumber)
-        this.initGarageList()
+        if (this.listServices) {
+            const nextNumber = this.listServices.getPage() + 1
+            this.listServices.setPage(nextNumber)
+            this.initGarageList()
+        }
     }
 
-    handleRemoveCar = (e) => {
-        const targetId = Number(e.target.closest('.garage__item').dataset.id);
+    handleRemoveCar = (e: Event) => {
+        let target = e.target as HTMLButtonElement
+        let closestGarage = target.closest('.garage__item') as HTMLElement
+        const targetId = Number(closestGarage?.dataset.id);
         deleteCar(targetId).then(() => {
-            this.listServices.removeEntity(targetId)
+            this.listServices?.removeEntity(targetId)
             this.initGarageList()
         })
     }
 
-    handleSelectCar = (e) => {
-        const targetId = e.target.closest('li').dataset.id;
-        const color = document.getElementById('colorUpdate')
-        const name = document.getElementById('nameUpdate')
-        const id = document.getElementById('idUpdate')
-        const selectedCar = this.listServices.getEntity(targetId)
-        color?.value = selectedCar.color
-        name?.value = selectedCar.name
-        id?.value = selectedCar.id
+    handleSelectCar = (e: Event) => {
+        // const targetId = e.target.closest('li').dataset.id;
+        let target = e.target as HTMLButtonElement
+        let closestGarage = target.closest('.garage__item') as HTMLElement
+        const targetId = Number(closestGarage?.dataset.id);
+
+        const color = document.getElementById('colorUpdate') as HTMLInputElement
+        const name = document.getElementById('nameUpdate') as HTMLInputElement
+        const id = document.getElementById('idUpdate') as HTMLInputElement
+        const selectedCar: CarItem = this.listServices?.getEntity(targetId) as CarItem
+        color.value = selectedCar.color
+        name.value = selectedCar.name
+        id.value = `${selectedCar.id}`
     }
 
     // Garage Form
     initFormCar = () => {
-        this.unbindFormCar()
-        document.querySelector('.createCar')?.innerHTML = ''
+        //this.unbindFormCar()
+        (document.querySelector('.createCar') as HTMLElement).innerHTML = ''
         this.renderFormCar()
         this.bindFormCar()
     }
 
-    unbindFormCar = () => { }
+    // unbindFormCar = () => { }
 
     bindFormCar = () => {
         const createBtn = document.querySelector('.btn-createCar')
@@ -194,7 +196,7 @@ class Garage {
 
     renderFormCar = () => {
         const createCar = document.querySelector('.createCar')
-        createCar?.innerHTML = `
+        if (createCar) createCar.innerHTML = `
             <div class="wrapper-car-form">
                 <div class="wrapper-create">
                     <form class="create-car-form">
@@ -220,36 +222,38 @@ class Garage {
         `
     }
 
-    handleCreateCar = (e) => {
+    handleCreateCar = (e: Event) => {
         e.preventDefault()
-        const formEl = document.querySelector('.create-car-form');
-        const formData = new FormData(formEl);
-        const params = {};
+        const formEl = document.querySelector('.create-car-form') as HTMLFormElement;
+        if (formEl) {
+            const formData = new FormData(formEl);
+            const params: CarItem = {} as CarItem;
 
-        for (const [key, value] of formData) {
-            params[key] = value;
+            for (const [key, value] of formData) {
+                params[key as string] = value;
+            }
+
+            createCar(params).then((data) => {
+                this.listServices?.addEntity(data);
+                this.initGarageList()
+            })
         }
-
-        createCar(params).then((data) => {
-            this.listServices.addEntity(data);
-            this.initGarageList()
-        })
     }
 
-    handleUpdateCar = (e) => {
+    handleUpdateCar = (e: Event) => {
         e.preventDefault()
 
-        const formEl = document.querySelector('.update-car-form');
+        const formEl = document.querySelector('.update-car-form') as HTMLFormElement;
         const formData = new FormData(formEl);
-        const params = {};
+        const params: CarItem = {} as CarItem;
 
         for (const [key, value] of formData) {
             params[key] = value;
         }
         const { id, ...otherParams } = params
         if (!id) return;
-        updateCar(id, otherParams).then((entity) => {
-            this.listServices.updateEntity(entity.id, entity)
+        updateCar(id, otherParams as CarItem).then((entity) => {
+            this.listServices?.updateEntity(entity.id, entity)
             this.initGarageList()
             this.clearUpdateForm()
         })
@@ -257,76 +261,80 @@ class Garage {
 
     handleGenerateCars = () => {
         const newCars = getRandomCarsList()
-        const carsPromises = []
-        newCars.forEach((item) => carsPromises.push(createCar(item)))
+        const carsPromises: Promise<any>[] = []
+        newCars.forEach((item: Partial<CarItem>) => carsPromises.push(createCar(item)))
         Promise.all(carsPromises).then((data) => {
-            this.listServices.addEntities(data)
+            this.listServices?.addEntities(data)
             this.initGarageList()
         })
     }
 
     clearUpdateForm = () => {
-        const color = document.getElementById('colorUpdate')
-        const name = document.getElementById('nameUpdate')
-        const id = document.getElementById('idUpdate')
-        color?.value = DEFAULT_COLOR;
-        name?.value = '';
-        id?.value = '';
+        const color = document.getElementById('colorUpdate') as HTMLInputElement
+        const name = document.getElementById('nameUpdate') as HTMLInputElement
+        const id = document.getElementById('idUpdate') as HTMLInputElement
+        color.value = DEFAULT_COLOR;
+        name.value = '';
+        id.value = '';
     }
 
     handleRaceCars = () => {
-        document.querySelector('.btn-race').disabled = true
-        
-
-        const startRacePromise = []
+        const raceBtn = document.querySelector('.btn-race') as HTMLButtonElement
+        raceBtn.disabled = true
+        const startRacePromise: Promise<any>[] = []
         let place = 1;
         this.raceList.forEach((car: CarService) => {
             startRacePromise.push(car.handleStartRace())
         })
         Promise.all(startRacePromise).then(() => {
             this.raceList.forEach((car: CarService) => {
-                car.handleDriveEngine().then((data) => {
-                    if (data && data.success == true && place === 1) {
-                        place++;
-                        this.setWinner(car)
+                const driveEnginePromise = car.handleDriveEngine();
+                if (driveEnginePromise) {
+                    driveEnginePromise.then((data: EngineDriveResponse) => {
+                        if (data && data.success == true && place === 1) {
+                            place++;
+                            this.setWinner(car)
 
-                    }
-                })
+                        }
+                    })
+                }
             })
         })
     }
     handleResetCars = () => {
-        document.querySelector('.btn-race').disabled = false
-      
-
-
-        document.querySelectorAll('.winner').forEach((i) => i.innerText = '');
+        const raceBtn = document.querySelector('.btn-race') as HTMLButtonElement
+        raceBtn.disabled = false
+        document.querySelectorAll('.winner').forEach((i) => (i as HTMLDivElement).innerText = '');
         this.raceList.forEach((car: CarService) => {
             car.handleStop()
         })
     }
 
-    setWinner = (car) => {
-        let time = (car.raceParams.distance / car.raceParams.velocity / 1000).toFixed(2)
-        const container = document.querySelector(`${car.containerSelector} .winner`)
-        container.innerText = `WINNER ${car.car.name} - ${time} s`
-        const winnerParams = {
-            id: car.car.id,
-            'time': time,
-            'wins': 1
-        }
-        getWinner(winnerParams.id).then((data) => {
-
-            if (data.id) {
-                winnerParams.wins = ++data.wins;
-                if (data.time < winnerParams.time) {
-                    winnerParams.time = data.time
+    setWinner = (car: CarService) => {
+        if (car.raceParams && car.raceParams.distance && car.raceParams.velocity) {
+            let time = (car.raceParams.distance / car.raceParams.velocity / 1000).toFixed(2)
+            const container = document.querySelector(`${car.containerSelector} .winner`) as HTMLDivElement
+            container.innerText = `WINNER ${car?.car?.name} - ${time} s`
+            const carId = car?.car?.id
+            if (carId) {
+                const winnerParams: WinnerItem = {
+                    id: carId,
+                    'time': +time,
+                    'wins': 1
                 }
-                updateWinner(winnerParams)
-            } else {
-                createWinner(winnerParams)
+                getWinner(carId).then((data) => {
+                    if (data.id && data.wins && data.time) {
+                        winnerParams.wins = ++data.wins;
+                        if (Number(data.time) < Number(winnerParams.time)) {
+                            winnerParams.time = data.time
+                        }
+                        updateWinner(winnerParams)
+                    } else {
+                        createWinner(winnerParams)
+                    }
+                })
             }
-        })
+        }
     }
 
 }

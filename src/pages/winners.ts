@@ -1,16 +1,16 @@
-//@ts-nocheck
 import { renderWinner } from "../helpers/car";
 import { getWinnersList } from "../services/APIService";
 import ListServices from "../services/ListServices";
-import { onNavigate } from "../utils/onNavigate.ts"
+import { onNavigate } from "../utils/onNavigate"
 import { garageListService } from './../index';
+import { CarItem, RouteModule, WinCarItem, WinnerItem } from './../types';
 
 
-class Winners {
-    listServices: ListServices | null = null
-    garageListService: ListServices | null = null
+class Winners implements RouteModule<WinnerItem> {
+    listServices: ListServices<WinnerItem> | null = null
+    garageListService: ListServices<CarItem> | null = null
 
-    constructor(listService, garageListService) {
+    constructor(listService: ListServices<WinnerItem>, garageListService: ListServices<CarItem>) {
         this.listServices = listService;
         this.garageListService = garageListService;
     }
@@ -26,7 +26,7 @@ class Winners {
     }
 
     bind = () => {
-      
+
     }
 
     afterRender = () => {
@@ -41,7 +41,8 @@ class Winners {
     }
 
     initWinnersList = () => {
-        document.querySelector('.container-winners')?.innerHTML = '';
+        const winnersAContainer = document.querySelector('.container-winners')
+        if (winnersAContainer) winnersAContainer.innerHTML = '';
         this.renderWinners()
         this.bindWinnersList()
     }
@@ -63,25 +64,25 @@ class Winners {
 
     getWinnersData = () => {
         const winners = this.listServices?.getDataByCurrentPage();
-        return winners?.reduce((acc, winner) => {
+        return winners?.reduce((acc: WinCarItem[], winner: WinnerItem) => {
             acc.push({
                 ...winner,
                 ...this.garageListService?.getEntity(winner.id)
-            });
+            } as WinCarItem);
             return acc;
         }, []);
     }
 
     renderWinners = () => {
         const winnersData = this.getWinnersData();
-        const isPrevDisabled = this.listServices.isFirstPage()
-        const isNextDisabled = this.listServices.isLastPage()
+        const isPrevDisabled = this.listServices?.isFirstPage()
+        const isNextDisabled = this.listServices?.isLastPage()
 
-        const container = document.querySelector('.container-winners')
-        container?.innerHTML = `
+        const container = document.querySelector('.container-winners') as HTMLDivElement
+        if (container) container.innerHTML = `
             <div class="winners">
-                <span class="winners__page">page: ${this.listServices.getPage()}</span>
-                <span class="winners__page">total: ${this.listServices.getTotal()}</span>
+                <span class="winners__page">page: ${this.listServices?.getPage()}</span>
+                <span class="winners__page">total: ${this.listServices?.getTotal()}</span>
             <table class="table">
                 <thead>
                     <tr>
@@ -106,9 +107,9 @@ class Winners {
                     </tr>
                 </thead>
                 <tbody>
-                    ${winnersData.map((i) => {
-                        return renderWinner(i);
-                    }).join('')}
+                    ${winnersData?.map((i: WinCarItem) => {
+            return renderWinner(i);
+        }).join('')}
                 </tbody>
             </table>
 
@@ -119,35 +120,39 @@ class Winners {
     }
 
     handlePrev = () => {
-        const prevNumber = this.listServices.getPage() - 1
-        this.listServices.setPage(prevNumber)
-        this.initWinnersList()
+        if (this.listServices) {
+            const prevNumber = this.listServices.getPage() - 1
+            this.listServices.setPage(prevNumber)
+            this.initWinnersList()
+        }
     }
     handleNext = () => {
-        const nextNumber = this.listServices.getPage() + 1
-        this.listServices.setPage(nextNumber)
+        if (this.listServices) {
+            const nextNumber = this.listServices.getPage() + 1
+            this.listServices.setPage(nextNumber)
+            this.initWinnersList()
+        }
+    }
+
+    handleSortTimeUp = () => {
+        this.listServices?.setSortBy('time')
+        this.listServices?.setSortOrient('asc')
+        this.initWinnersList()
+    }
+    handleSortTimeDown = () => {
+        this.listServices?.setSortBy('time')
+        this.listServices?.setSortOrient('desc')
         this.initWinnersList()
     }
 
-    handleSortTimeUp = (e) => {
-        this.listServices.setSortBy('time')
-        this.listServices.setSortOrient('asc')
-        this.initWinnersList()
-    }
-    handleSortTimeDown = (e) => {
-        this.listServices.setSortBy('time')
-        this.listServices.setSortOrient('desc')
-        this.initWinnersList()
-    }
-
-    handleWinsUp = (e) => {
+    handleWinsUp = () => {
         this.listServices?.setSortBy('wins')
         this.listServices?.setSortOrient('desc')
         this.initWinnersList()
     }
-    handleWinsDown = (e) => {
-        this.listServices.setSortBy('wins')
-        this.listServices.setSortOrient('asc')
+    handleWinsDown = () => {
+        this.listServices?.setSortBy('wins')
+        this.listServices?.setSortOrient('asc')
         this.initWinnersList()
     }
 }

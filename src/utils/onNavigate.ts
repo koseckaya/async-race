@@ -1,7 +1,5 @@
-//@ts-nocheck
 import { routes } from '../index';
-
-
+import { onNavigateType } from '../types';
 
 export const onNavigate: onNavigateType = (path) => {
     const root = document.querySelector('#root')

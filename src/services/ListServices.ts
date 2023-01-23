@@ -1,13 +1,12 @@
-//@ts-nocheck
-import { CarItem } from "../types";
+import { Entity } from "../types";
 
-class ListServices {
-    items: CarItem[] = []
+class ListServices<T = Entity> {
+    items: T[] = []
     page = 1
     perPage = 7
-    sortBy: string | null = null
-    sortOrient: string | null = null
-    constructor(items: CarItem[], perPage: number) {
+    sortBy: string = ''
+    sortOrient: string = ''
+    constructor(items: T[], perPage: number) {
         this.items = items;
         this.perPage = perPage;
     }
@@ -20,14 +19,14 @@ class ListServices {
         }
     }
 
-    getDataByCurrentPage = (): CarItem[] => { 
+    getDataByCurrentPage = (): T[] => {
         const startWith = (this.page - 1) * this.perPage
         this.sortItems()
         const itemsOnPage = this.items.slice(startWith, startWith + this.perPage)
         return itemsOnPage;
     }
 
-    setItems = (items: CarItem[]) => {
+    setItems = (items: T[]) => {
         this.items = items
     }
 
@@ -36,44 +35,52 @@ class ListServices {
     getPage = (): number => this.page;
 
     getTotalPages = (): number => Math.ceil(this.getTotal() / this.perPage);
-    
-    addEntity = (entity: CarItem) => this.items.push(entity)
 
-    addEntities = (entities: CarItem[]) => this.items.push(...entities)
+    addEntity = (entity: T) => this.items.push(entity)
 
-    updateEntity = (id: number, entity: CarItem) => {
+    addEntities = (entities: T[]) => this.items.push(...entities)
+
+    updateEntity = (id: number, entity: T) => {
         const newItems = this.items.map((item) => {
-            if (item.id === id) {
-                return { ...item, ...entity}
-            } 
+            const itemId = Number((item as Entity).id);
+            if (itemId === id) {
+                return { ...item, ...entity }
+            }
             return item;
         })
         this.items = newItems;
     }
 
-    removeEntity = (id: number) => { 
+    removeEntity = (id: number) => {
         this.items = this.items.filter((item) => {
-            return item.id !== id;
-        } )
+            const itemId = Number((item as Entity).id);
+            return itemId !== id;
+        })
     }
-    
-    getEntity = (id: number) => this.items.find((item) => +item.id === +id);
-  
-    isFirstPage = ():boolean => {
+
+    getEntity = (id: number) => this.items.find((item: T) => {
+        const itemId = Number((item as Entity).id);
+        return itemId === +id
+    });
+
+    isFirstPage = (): boolean => {
         return this.getPage() === 1 ? true : false;
     }
-    isLastPage = ():boolean => {
+    isLastPage = (): boolean => {
         return this.getPage() === this.getTotalPages() ? true : false;
     }
     sortItems = () => {
         if (this.sortBy && this.sortOrient) {
-            this.items = this.items.sort((car1, car2) => {
-                if (car1[this.sortBy] > car2[this.sortBy]) {
+            this.items = this.items.sort((car1: T, car2: T) => {
+                const firstCar = car1[this.sortBy as keyof T];
+                const secondCar = car2[this.sortBy as keyof T];
+
+                if (firstCar > secondCar) {
                     if (this.sortOrient == 'asc') {
-                         return 1
+                        return 1
                     } else {
                         return -1
-                     }
+                    }
                 } else {
                     if (this.sortOrient == 'asc') {
                         return -1
@@ -81,18 +88,18 @@ class ListServices {
                         return 1
                     }
                 }
-           }) 
+            })
         }
-        
+
     }
 
-    setSortBy = (by) => {
+    setSortBy = (by: string) => {
         this.sortBy = by
     }
-    setSortOrient = (orient) => {
+    setSortOrient = (orient: string) => {
         this.sortOrient = orient
     }
-   
+
 
 }
 export default ListServices

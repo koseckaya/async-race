@@ -176,7 +176,7 @@ input[type='color'] {
         margin-right: 30px;
     }
     &__wrapper {
-        
+        height: 60px;
         svg {
             
             width: 87px;
@@ -192,7 +192,7 @@ input[type='color'] {
 }
 .track {
     background: url(./img/track2.png);
-    height: 820px;
+    height: 730px;
     background-size: 100% 100%;
     background-repeat: no-repeat;
     padding-top: 15px;

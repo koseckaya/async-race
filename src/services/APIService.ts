@@ -1,6 +1,5 @@
 import { CarItem, WinnerItem } from "../types";
 
-
 const BACKEND_URL = 'http://localhost:3000/';
 const ENDPOINTS = {
     'ENGINE': BACKEND_URL + 'engine',
@@ -8,13 +7,15 @@ const ENDPOINTS = {
     'WINNERS': BACKEND_URL + 'winners'
 }
 
-export const getCarsList = () => {
+export function getCarsList(): Promise<CarItem[]> {
     return fetch(ENDPOINTS.GARAGE, {
         method: 'GET',
     })
+        .then(res => res.json())
+        .then(data => data as CarItem[])
 }
 
-export const createCar = (params: CarItem) => {
+export const createCar = (params: Partial<CarItem>) => {
     return fetch(ENDPOINTS.GARAGE, {
         method: 'POST',
         body: JSON.stringify(params),
@@ -42,9 +43,6 @@ export const updateCar = (id: number, params: CarItem) => {
 
 
 export const startEngine = (id: number) => {
-    //const startBtns = Array.from(document.querySelectorAll<HTMLButtonElement>('.btn-start') )
-    //startBtns.forEach(i => i.disabled = true)
-
 
     return fetch(ENDPOINTS.ENGINE + '?id=' + id + '&status=started', {
         method: 'PATCH',
@@ -54,7 +52,7 @@ export const startEngine = (id: number) => {
     }).then((data) => data.json())
 }
 
-export const driveEngine = (id: number, signal = null) => {
+export const driveEngine = (id: number, signal: AbortSignal | null = null) => {
     return fetch(ENDPOINTS.ENGINE + '?id=' + id + '&status=drive', {
         method: 'PATCH',
         headers: {
@@ -107,7 +105,7 @@ export const updateWinner = (params: WinnerItem) => {
     }).then((data) => data.json())
 }
 
-export const deleteWinner= (id: number) => {
+export const deleteWinner = (id: number) => {
     return fetch(ENDPOINTS.WINNERS + '/' + id, {
         method: 'DELETE',
     })

@@ -1,8 +1,8 @@
-// @ts-nocheck
 
-import { CarRequest } from "../types";
 
-export const renderCar = car => {
+import { CarItem, CarRequest } from "../types";
+
+export const renderCar = (car: CarItem): string => {
    return `
         <li class="garage__item" data-id="${car.id}">
             <div class="car__btns">
@@ -15,7 +15,7 @@ export const renderCar = car => {
     `;
 }
 
-export const renderWinner = car => {
+export const renderWinner = (car: CarItem): string => {
    return `
          <tr data-id="${car.id}">
             <td>${car.id}</td>
@@ -26,7 +26,7 @@ export const renderWinner = car => {
          </tr>
     `;
 }
-const carBrands = [
+const carBrands: string[] = [
    'Acura', 'Alfa Romeo', 'Alpine', 'Apollo', 'Apple', 'Aston Martin', 'Audi', 'Automobili Pininfarina', 'Bentley', 'BMW', 'Bollinger',
    'Brilliance', 'Bugatti', 'Buick', 'BYD', 'Cadillac', 'Chana', 'Chery', 'Chevrolet', 'Chrysler', 'Citroen', 'Continental', 'CUPRA',
    'Dacia', 'Daewoo', 'Daihatsu', 'Datsun', 'Detroit Electric', 'Dodge', 'DS Automobiles', 'FAW', 'Ferrari', 'Fiat', 'Fisker', 'Ford',
@@ -38,14 +38,14 @@ const carBrands = [
    'Tesla', 'Torsus', 'Toyota', 'VinFast', 'Volkswagen', 'Volvo', 'Xpeng', 'Zotye'
 ];
 
-const carModels = [
+const carModels: string[] = [
    'Durango', 'Ram', 'Challenger', 'Charger', 'Grand Caravan', 'X7', 'X5', 'X3', 'X6 M', 'X6', 'X1', 'X4', 'Celica', 'Carrera', 'Lancer', 'CR-V', 'Corolla',
    'C4 Cactus', 'Impala', 'C1', 'C3', 'Studenta 1', 'DS4 Crossback', 'UX 250h', 'NX 300h', 'LC 500', 'RX 350/200t', 'Rapid', 'Largus',
    'Skyline', 'LS 500h', 'RX', 'ES 200/250/350', 'Hatchback', 'CX-5', 'Sedan', 'CX-30', 'CX-9', 'CX-3', 'MX-5 Roadster', 'Phantom', 'Camry', 'Polo',
    'Supra', 'Ghost', 'Dawn', 'Murcielago', 'M5', 'GTR', 'Camaro', 'M3', 'Aventador', 'Gallardo', 'Cayman', 'RAV4', 'Rio', 'Creta', 'Solaris'
 ];
 
-const getRandomColor = () => {
+const getRandomColor = (): string => {
    const colorParts = '0123456789ABCDEF';
    let color = '#';
    for (let i = 0; i < 6; i += 1) {
@@ -62,7 +62,7 @@ const getRandomName = (): string => {
 const getRandomCarData = (): CarRequest => {
    return { name: getRandomName(), color: getRandomColor() };
 }
-export const getRandomCarsList = (n = 100) => {
+export const getRandomCarsList = (n: number = 100): Partial<CarItem>[] => {
    const carsArray = []
    for (let i = 0; i < n; i++) {
       carsArray.push(getRandomCarData())
@@ -70,7 +70,7 @@ export const getRandomCarsList = (n = 100) => {
    return carsArray;
 }
 
-export const renderCarSvg = (color = '#000') => {
+export const renderCarSvg = (color: string = '#000'): string => {
    return `
    <div class="car__img">
       <div id="blunt_container">
@@ -419,7 +419,7 @@ export const renderCarSvg = (color = '#000') => {
     `
 }
 
-const renderWinCarSvg = (color = '#000') => {
+const renderWinCarSvg = (color: string = '#000'): string => {
    return `
    <?xml version="1.0" encoding="iso-8859-1"?>
 <svg fill="${color}" height="800px" width="800px" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
