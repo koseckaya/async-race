@@ -1,5 +1,5 @@
 ### Приложение можно протестировать локально, либо воспользоваться ссылкой на готовый build
-https://rolling-scopes-school.github.io/koseckaya-JSFE2022Q3/race/index.html
+https://rolling-scopes-school.github.io/koseckaya-JSFE2022Q3/race/
 Не забудьте запустить api сервер локально)
 
 ### Запуск сервера для разработки
