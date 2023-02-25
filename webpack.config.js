@@ -17,6 +17,9 @@ module.exports = {
     hot: true,
     historyApiFallback: true,
   },
+  resolve: {
+    extensions: ['.ts', '.js', '.json']
+  },
   entry: path.resolve(__dirname, 'src', 'index.ts'),
   output: {
     publicPath: '/',

@@ -2,5 +2,306 @@ body {
   font-family: 'Montserrat';
   background-color: $back;
   color: $text;
+   padding: 10px 30px;
 }
 
+
+.ride{
+  animation: ease-in ride;
+  animation-fill-mode: forwards;
+}
+
+@keyframes ride {
+  0% {
+     margin-left: 0%;
+  }
+  100% {
+    margin-left: calc(100% - 60px);
+  }
+}
+
+
+@keyframes neon {
+  0%,
+  100% {
+    text-shadow: 0 0 1vw #FA1C16, 0 0 3vw #FA1C16, 0 0 10vw #FA1C16, 0 0 10vw #FA1C16, 0 0 .4vw #FED128, .5vw .5vw .1vw #806914;
+    color: #FED128;
+  }
+  50% {
+    text-shadow: 0 0 .5vw #800E0B, 0 0 1.5vw #800E0B, 0 0 5vw #800E0B, 0 0 5vw #800E0B, 0 0 .2vw #800E0B, .5vw .5vw .1vw #40340A;
+    color: #806914;
+  }
+}
+
+.table {
+	width: 100%;
+	border: none;
+	margin-bottom: 20px;
+  margin-top: 20px;
+  thead th {
+    font-weight: bold;
+    text-align: left;
+    border: none;
+    padding: 10px 15px;
+    background: #12262b;
+    font-size: 16px;
+  }
+  thead tr th:first-child {
+    border-radius: 8px 0 0 8px;
+  }
+  tr th:last-child {
+    border-radius: 0 8px 8px 0;
+  }
+  tbody td {
+    text-align: left;
+    border: none;
+    padding: 10px 15px;
+    font-size: 16px;
+    vertical-align: top;
+  }
+  tbody tr:nth-child(even){
+    background: #12262b;
+  }
+  tbody tr td:first-child {
+    border-radius: 8px 0 0 8px;
+  }
+  tbody tr td:last-child {
+    border-radius: 0 8px 8px 0;
+  }
+}
+
+#blunt_container{
+  display: none;
+	width:50px;
+  height:50px;
+  position: absolute;
+  top: -38px;
+  left: 68px;
+  transform: translateY(0);
+  animation: feelingit 5s infinite;
+}
+
+@keyframes feelingit {
+	50% { -webkit-transform: translateY(-20px); transform: translateY(-20px); }
+	100% { -webkit-transform: translateY(0); transform: translateY(0); }
+}
+
+@keyframes smoke1 {
+  0% {
+    -webkit-transform: scale(0.2);
+            transform: scale(0.2);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    -webkit-transform: scale(3) translate(6px, -36px);
+            transform: scale(3) translate(6px, -36px);
+    opacity: 0;
+  }
+}
+
+@keyframes smoke2 {
+  0% {
+    -webkit-transform: scale(0.2);
+            transform: scale(0.2);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    -webkit-transform: scale(3) translate(-8px, -50px);
+            transform: scale(3) translate(-8px, -50px);
+    opacity: 0;
+  }
+}
+
+@keyframes smoke3 {
+  0% {
+    -webkit-transform: scale(0.2);
+            transform: scale(0.2);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    -webkit-transform: scale(3) translate(-1px, -41px);
+            transform: scale(3) translate(-1px, -41px);
+    opacity: 0;
+  }
+}
+
+@keyframes smoke4 {
+  0% {
+    -webkit-transform: scale(0.2);
+            transform: scale(0.2);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    -webkit-transform: scale(3) translate(0px, -41px);
+            transform: scale(3) translate(0px, -41px);
+    opacity: 0;
+  }
+}
+
+@keyframes smoke5 {
+  0% {
+    -webkit-transform: scale(0.2);
+            transform: scale(0.2);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  100% {
+    -webkit-transform: scale(3) translate(-4px, -42px);
+            transform: scale(3) translate(-4px, -42px);
+    opacity: 0;
+  }
+}
+.smoke-group {
+  width: 85px;
+  height: 85px;
+
+	margin-left:-30px;
+  position: absolute;
+}
+
+.smoke {
+  position: absolute;
+  bottom: 0;
+  left: calc(50% - 15px / 2);
+  width: 15px;
+  height: 15px;
+  background-color: #4f4f4f;
+  border-radius: 7.5px;
+  -webkit-filter: blur(6px);
+          filter: blur(6px);
+  opacity: 0;
+}
+.smoke:nth-child(1) {
+  -webkit-animation-name: smoke3;
+          animation-name: smoke3;
+  -webkit-animation-duration: 2s;
+          animation-duration: 2s;
+  -webkit-animation-timing-function: ease-out;
+          animation-timing-function: ease-out;
+  -webkit-animation-delay: 0.4s;
+          animation-delay: 0.4s;
+  -webkit-animation-iteration-count: infinite;
+          animation-iteration-count: infinite;
+}
+.smoke:nth-child(2) {
+  -webkit-animation-name: smoke2;
+          animation-name: smoke2;
+  -webkit-animation-duration: 3s;
+          animation-duration: 3s;
+  -webkit-animation-timing-function: ease-out;
+          animation-timing-function: ease-out;
+  -webkit-animation-delay: 0.8s;
+          animation-delay: 0.8s;
+  -webkit-animation-iteration-count: infinite;
+          animation-iteration-count: infinite;
+}
+.smoke:nth-child(3) {
+  -webkit-animation-name: smoke4;
+          animation-name: smoke4;
+  -webkit-animation-duration: 5s;
+          animation-duration: 5s;
+  -webkit-animation-timing-function: ease-out;
+          animation-timing-function: ease-out;
+  -webkit-animation-delay: 1.2s;
+          animation-delay: 1.2s;
+  -webkit-animation-iteration-count: infinite;
+          animation-iteration-count: infinite;
+}
+.smoke:nth-child(4) {
+  -webkit-animation-name: smoke2;
+          animation-name: smoke2;
+  -webkit-animation-duration: 5s;
+          animation-duration: 5s;
+  -webkit-animation-timing-function: ease-out;
+          animation-timing-function: ease-out;
+  -webkit-animation-delay: 1.6s;
+          animation-delay: 1.6s;
+  -webkit-animation-iteration-count: infinite;
+          animation-iteration-count: infinite;
+}
+.smoke:nth-child(5) {
+  -webkit-animation-name: smoke3;
+          animation-name: smoke3;
+  -webkit-animation-duration: 2s;
+          animation-duration: 2s;
+  -webkit-animation-timing-function: ease-out;
+          animation-timing-function: ease-out;
+  -webkit-animation-delay: 2s;
+          animation-delay: 2s;
+  -webkit-animation-iteration-count: infinite;
+          animation-iteration-count: infinite;
+}
+.smoke:nth-child(6) {
+  -webkit-animation-name: smoke3;
+          animation-name: smoke3;
+  -webkit-animation-duration: 4s;
+          animation-duration: 4s;
+  -webkit-animation-timing-function: ease-out;
+          animation-timing-function: ease-out;
+  -webkit-animation-delay: 2.4s;
+          animation-delay: 2.4s;
+  -webkit-animation-iteration-count: infinite;
+          animation-iteration-count: infinite;
+}
+.smoke:nth-child(7) {
+  -webkit-animation-name: smoke1;
+          animation-name: smoke1;
+  -webkit-animation-duration: 2s;
+          animation-duration: 2s;
+  -webkit-animation-timing-function: ease-out;
+          animation-timing-function: ease-out;
+  -webkit-animation-delay: 2.8s;
+          animation-delay: 2.8s;
+  -webkit-animation-iteration-count: infinite;
+          animation-iteration-count: infinite;
+}
+.smoke:nth-child(8) {
+  -webkit-animation-name: smoke1;
+          animation-name: smoke1;
+  -webkit-animation-duration: 5s;
+          animation-duration: 5s;
+  -webkit-animation-timing-function: ease-out;
+          animation-timing-function: ease-out;
+  -webkit-animation-delay: 3.2s;
+          animation-delay: 3.2s;
+  -webkit-animation-iteration-count: infinite;
+          animation-iteration-count: infinite;
+}
+.smoke:nth-child(9) {
+  -webkit-animation-name: smoke5;
+          animation-name: smoke5;
+  -webkit-animation-duration: 5s;
+          animation-duration: 5s;
+  -webkit-animation-timing-function: ease-out;
+          animation-timing-function: ease-out;
+  -webkit-animation-delay: 3.6s;
+          animation-delay: 3.6s;
+  -webkit-animation-iteration-count: infinite;
+          animation-iteration-count: infinite;
+}
+.smoke:nth-child(10) {
+  -webkit-animation-name: smoke4;
+          animation-name: smoke4;
+  -webkit-animation-duration: 2s;
+          animation-duration: 2s;
+  -webkit-animation-timing-function: ease-out;
+          animation-timing-function: ease-out;
+  -webkit-animation-delay: 4s;
+          animation-delay: 4s;
+  -webkit-animation-iteration-count: infinite;
+          animation-iteration-count: infinite;
+}

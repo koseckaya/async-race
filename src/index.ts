@@ -1,55 +1,40 @@
-//@ts-nocheck
 import './index.html';
 import './index.scss';
-import Garage from './pages/garage.ts';
-import Winners from './pages/winners.ts';
-import Header from './pages/header.ts';
+import Garage from './pages/garage';
+import Winners from './pages/winners';
+import Header from './pages/header';
+import ListServices from './services/ListServices';
+import { CarItem, WinnerItem, Router } from './types';
+import { GARAGE_PER_PAGE, WINNERS_PER_PAGE } from './constants';
+
+export const garageListService = new ListServices<CarItem>([], GARAGE_PER_PAGE)
+export const winnersListService = new ListServices<WinnerItem>([], WINNERS_PER_PAGE)
+
+const GarageModule = new Garage(garageListService);
+GarageModule.init();
+
+const WinnersModule = new Winners(winnersListService, garageListService)
+WinnersModule.init();
 
 export const routes: Router = {
-    '/': new Garage(),
-    '/winners': new Winners()
+    '/': GarageModule,
+    '/winners': WinnersModule
 };
-
-console.log(123);
-
-const body = document.querySelector('body');
 
 const root = document.createElement('div');
 root.setAttribute('id', 'root')
 
-const module = routes[window.location.pathname];
-
-
-
 const headerModule = new Header();
-
-body.innerHTML = headerModule.render();
+const body = document.querySelector('body');
+if (body) body.innerHTML = headerModule.render();
 headerModule?.bind();
 
 body?.appendChild(root);
+
+const module = routes[window.location.pathname];
 root.innerHTML = module.render();
 
-
 module?.bind();
+module?.afterRender();
 
-window.onpopstate = () => {
- //   root.innerHTML = routes[window.location.pathname]
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-document.querySelector('body').appendChild(root)
-
-
-
+document.querySelector('body')?.appendChild(root)
